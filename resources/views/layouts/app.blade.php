@@ -18,11 +18,6 @@
     <!-- Main Content -->
     <div class="sm:ml-64">
         <div class="p-4">
-            <!-- Page ID -->
-            <div class="text-right text-gray-600 mb-4">
-                D001
-            </div>
-
             <!-- Page Header -->
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">@yield('header')</h1>
