@@ -1,7 +1,7 @@
 <div class="sticky top-0 z-50">
     <div class="bg-white shadow-md mb-6 rounded-lg">
         <div class="border-b">
-            <!-- Tambahkan tombol menu untuk mobile -->
+            <!-- Tombol menu untuk mobile -->
             <div class="flex items-center sm:hidden px-4 py-2">
                 <button type="button" 
                         class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"

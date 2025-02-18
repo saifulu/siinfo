@@ -27,6 +27,32 @@
         </div>
     </div>
 
+    <!-- Script untuk toggle sidebar -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ambil elemen yang diperlukan
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('aside');
+        
+        if (sidebarToggle && sidebar) {
+            // Event listener untuk toggle button
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+
+            // Tambahkan event listener untuk menutup sidebar saat klik di luar
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickInsideToggle = sidebarToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickInsideToggle && !sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        }
+    });
+    </script>
+
     @stack('scripts')
 </body>
 </html> 
