@@ -4,7 +4,7 @@
             <!-- Tombol menu untuk mobile -->
             <div class="flex items-center sm:hidden px-4 py-2">
                 <button type="button" 
-                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         id="sidebar-toggle">
                     <i class='bx bx-menu text-2xl'></i>
                 </button>
@@ -15,8 +15,8 @@
                 <div class="flex flex-1 space-x-4">
                     <a href="{{ route('kunjungan') }}" 
                        class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('kunjungan*') ? 'text-green-600 border-b-[3px] border-green-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-green-600 hover:border-green-500">
+                              {{ request()->is('kunjungan*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
+                              hover:text-indigo-600 hover:border-indigo-500">
                         <div class="flex items-center space-x-2">
                             <i class='bx bx-user-pin text-xl'></i>
                             <span>Kunjungan</span>
@@ -25,8 +25,8 @@
                     
                     <a href="{{ route('keuangan') }}"
                        class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('keuangan*') ? 'text-green-600 border-b-[3px] border-green-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-green-600 hover:border-green-500">
+                              {{ request()->is('keuangan*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
+                              hover:text-indigo-600 hover:border-indigo-500">
                         <div class="flex items-center space-x-2">
                             <i class='bx bx-money text-xl'></i>
                             <span>Keuangan</span>
@@ -35,8 +35,8 @@
                     
                     <a href="{{ route('apotek') }}"
                        class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('apotek*') ? 'text-green-600 border-b-[3px] border-green-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-green-600 hover:border-green-500">
+                              {{ request()->is('apotek*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
+                              hover:text-indigo-600 hover:border-indigo-500">
                         <div class="flex items-center space-x-2">
                             <i class='bx bx-capsule text-xl'></i>
                             <span>Apotek</span>
@@ -45,8 +45,8 @@
                     
                     <a href="{{ route('hrd') }}"
                        class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('hrd*') ? 'text-green-600 border-b-[3px] border-green-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-green-600 hover:border-green-500">
+                              {{ request()->is('hrd*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
+                              hover:text-indigo-600 hover:border-indigo-500">
                         <div class="flex items-center space-x-2">
                             <i class='bx bx-user text-xl'></i>
                             <span>HRD</span>
@@ -58,7 +58,7 @@
                 <div class="relative">
                     @auth
                         <button type="button" 
-                                class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg focus:outline-none"
+                                class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-600 hover:bg-indigo-50 rounded-lg focus:outline-none"
                                 id="user-menu-button">
                             <span class="font-medium">{{ Session::get('nama_pegawai') ?? 'Pegawai' }}</span>
                             <i class='bx bx-chevron-down text-xl'></i>
@@ -72,18 +72,18 @@
                                 <p class="text-xs text-gray-500">{{ Session::get('jabatan') ?? '-' }}</p>
                             </div>
                             <a href="{{ route('profile') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">
                                 <i class='bx bx-user mr-2'></i>
                                 <span>Profil</span>
                             </a>
                             <a href="{{ route('settings') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">
                                 <i class='bx bx-cog mr-2'></i>
                                 <span>Pengaturan</span>
                             </a>
                             <hr class="my-1">
                             <a href="{{ route('logout') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                               class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                                 <i class='bx bx-log-out mr-2'></i>
                                 <span>Keluar</span>
                             </a>

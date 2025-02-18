@@ -14,7 +14,66 @@
                 </a>
             </li>
 
-            @if(request()->is('keuangan*'))
+            @if(request()->is('kunjungan*'))
+                <!-- Menu Kunjungan -->
+                <li>
+                    <a href="{{ route('kunjungan.dashboard') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-home text-xl'></i>
+                        <span class="ml-3">Dashboard Kunjungan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kunjungan.rawatjalan') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-walk text-xl'></i>
+                        <span class="ml-3">Rawat Jalan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kunjungan.rawatinap') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-bed text-xl'></i>
+                        <span class="ml-3">Rawat Inap</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kunjungan.igd') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-plus-medical text-xl'></i>
+                        <span class="ml-3">IGD</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kunjungan.operasi') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-knife text-xl'></i>
+                        <span class="ml-3">Kamar Operasi</span>
+                    </a>
+                </li>
+                <!-- Sub menu Laporan -->
+                <li>
+                    <a href="{{ route('kunjungan.laporan.harian') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-file text-xl'></i>
+                        <span class="ml-3">Laporan Harian</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kunjungan.laporan.bulanan') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-calendar text-xl'></i>
+                        <span class="ml-3">Laporan Bulanan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kunjungan.laporan.tahunan') }}" 
+                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                        <i class='bx bx-calendar-star text-xl'></i>
+                        <span class="ml-3">Laporan Tahunan</span>
+                    </a>
+                </li>
+            @elseif(request()->is('keuangan*'))
                 <!-- Menu Keuangan -->
                 <li>
                     <a href="{{ route('keuangan.dashboard') }}" 

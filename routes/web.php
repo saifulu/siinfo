@@ -60,6 +60,8 @@ Route::middleware(['web', 'auth'])->group(function() {
         Route::get('/dashboard', [KunjunganController::class, 'dashboard'])->name('kunjungan.dashboard');
         Route::get('/rawat-jalan', [KunjunganController::class, 'rawatJalan'])->name('kunjungan.rawatjalan');
         Route::get('/rawat-inap', [KunjunganController::class, 'rawatInap'])->name('kunjungan.rawatinap');
+        Route::get('/igd', [KunjunganController::class, 'igd'])->name('kunjungan.igd');
+        Route::get('/operasi', [KunjunganController::class, 'operasi'])->name('kunjungan.operasi');
         
         // Routes untuk Laporan
         Route::prefix('laporan')->group(function () {
