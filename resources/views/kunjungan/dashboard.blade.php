@@ -6,68 +6,74 @@
 @section('content')
 <!-- Cards Utama -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <!-- Rawat Inap -->
-    <div class="bg-white hover:bg-blue-50 transition-colors duration-300 rounded-lg shadow-md p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-800">Rawat Inap</h3>
-            <i class='bx bx-bed text-2xl text-blue-500'></i>
+    <!-- Rawat Inap Card -->
+    <div class="bg-gradient-to-br from-blue-50 via-white to-blue-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 rounded-xl shadow-md p-4 border border-blue-100">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-blue-800">Rawat Inap</h3>
+            <div class="p-1.5 bg-blue-100 rounded-lg">
+                <i class='bx bx-bed text-xl text-blue-600'></i>
+            </div>
         </div>
         <div class="space-y-2">
-            <div class="flex justify-between">
-                <span class="text-gray-600">Total Pasien</span>
-                <span class="font-semibold">{{ number_format($data['rawat_inap']['total_pasien']) }}</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-blue-50 rounded-lg transition-colors">
+                <span class="text-blue-700 font-medium">Total Pasien</span>
+                <span class="font-bold text-blue-900">{{ number_format($data['rawat_inap']['total_pasien']) }}</span>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-600">Pasien Masuk</span>
-                <span class="font-semibold text-green-500">{{ number_format($data['rawat_inap']['pasien_masuk']) }}</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-blue-50 rounded-lg transition-colors">
+                <span class="text-blue-700 font-medium">Pasien Masuk</span>
+                <span class="font-bold text-blue-900">{{ number_format($data['rawat_inap']['pasien_masuk']) }}</span>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-600">Pasien Keluar</span>
-                <span class="font-semibold text-red-500">{{ number_format($data['rawat_inap']['pasien_keluar']) }}</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-blue-50 rounded-lg transition-colors">
+                <span class="text-blue-700 font-medium">Pasien Keluar</span>
+                <span class="font-bold text-blue-900">{{ number_format($data['rawat_inap']['pasien_keluar']) }}</span>
             </div>
         </div>
     </div>
 
-    <!-- Rawat Jalan -->
-    <div class="bg-white hover:bg-green-50 transition-colors duration-300 rounded-lg shadow-md p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-800">Rawat Jalan</h3>
-            <i class='bx bx-walk text-2xl text-green-500'></i>
+    <!-- Rawat Jalan Card -->
+    <div class="bg-gradient-to-br from-green-50 via-white to-green-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 rounded-xl shadow-md p-4 border border-green-100">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-green-800">Rawat Jalan</h3>
+            <div class="p-1.5 bg-green-100 rounded-lg">
+                <i class='bx bx-walk text-xl text-green-600'></i>
+            </div>
         </div>
         <div class="space-y-2">
-            <div class="flex justify-between">
-                <span class="text-gray-600">Total Kunjungan</span>
-                <span class="font-semibold">{{ number_format($data['rawat_jalan']['total_kunjungan']) }}</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-green-50 rounded-lg transition-colors">
+                <span class="text-green-700 font-medium">Total Kunjungan</span>
+                <span class="font-bold text-green-900">{{ number_format($data['rawat_jalan']['total_kunjungan']) }}</span>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-600">Pasien Baru</span>
-                <span class="font-semibold text-blue-500">{{ number_format($data['rawat_jalan']['pasien_baru']) }}</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-green-50 rounded-lg transition-colors">
+                <span class="text-green-700 font-medium">Pasien Baru</span>
+                <span class="font-bold text-green-900">{{ number_format($data['rawat_jalan']['pasien_baru']) }}</span>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-600">Pasien Lama</span>
-                <span class="font-semibold text-purple-500">{{ number_format($data['rawat_jalan']['pasien_lama']) }}</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-green-50 rounded-lg transition-colors">
+                <span class="text-green-700 font-medium">Pasien Lama</span>
+                <span class="font-bold text-green-900">{{ number_format($data['rawat_jalan']['pasien_lama']) }}</span>
             </div>
         </div>
     </div>
 
-    <!-- IGD -->
-    <div class="bg-white hover:bg-red-50 transition-colors duration-300 rounded-lg shadow-md p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-800">IGD</h3>
-            <i class='bx bx-plus-medical text-2xl text-red-500'></i>
+    <!-- IGD Card -->
+    <div class="bg-gradient-to-br from-red-50 via-white to-red-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 rounded-xl shadow-md p-4 border border-red-100">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-red-800">IGD</h3>
+            <div class="p-1.5 bg-red-100 rounded-lg">
+                <i class='bx bx-plus-medical text-xl text-red-600'></i>
+            </div>
         </div>
         <div class="space-y-2">
-            <div class="flex justify-between">
-                <span class="text-gray-600">Kasus Gawat Darurat</span>
-                <span class="font-semibold text-red-500">5</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                <span class="text-red-700 font-medium">Total Kunjungan</span>
+                <span class="font-bold text-red-900">{{ number_format($data['igd']['total_kunjungan']) }}</span>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-600">Kasus Non-Darurat</span>
-                <span class="font-semibold text-yellow-500">8</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                <span class="text-red-700 font-medium">Lanjut Rawat Inap</span>
+                <span class="font-bold text-red-900">{{ number_format($data['igd']['kasus_darurat']) }}</span>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-600">Total Kunjungan</span>
-                <span class="font-semibold">13</span>
+            <div class="flex justify-between items-center p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                <span class="text-red-700 font-medium">Pasien Pulang</span>
+                <span class="font-bold text-red-900">{{ number_format($data['igd']['kasus_non_darurat']) }}</span>
             </div>
         </div>
     </div>
@@ -77,32 +83,33 @@
 <div class="bg-white hover:bg-gray-50 transition-colors duration-300 rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-semibold text-gray-800">Tren Kunjungan</h3>
-        <select class="rounded-md border-gray-300 text-sm px-3 py-1">
-            <option>Hari</option>
-            <option>Minggu</option>
-            <option>Bulan</option>
+        <select id="filterTren" class="rounded-md border-gray-300 text-sm px-3 py-1" 
+                onchange="window.location.href='?filter=' + this.value">
+            <option value="hari" {{ $data['current_filter'] == 'hari' ? 'selected' : '' }}>Hari</option>
+            <option value="minggu" {{ $data['current_filter'] == 'minggu' ? 'selected' : '' }}>Minggu</option>
+            <option value="bulan" {{ $data['current_filter'] == 'bulan' ? 'selected' : '' }}>Bulan</option>
         </select>
     </div>
     
-    <!-- Legend -->
-    <div class="flex items-center gap-4 mb-4 text-sm">
-        <div class="flex items-center">
-            <div class="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-            <span>Rawat Inap</span>
-        </div>
-        <div class="flex items-center">
-            <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-            <span>Rawat Jalan</span>
-        </div>
-        <div class="flex items-center">
-            <div class="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-            <span>IGD</span>
-        </div>
-    </div>
-
     <!-- Grafik -->
     <div class="h-64">
         <canvas id="kunjunganChart"></canvas>
+    </div>
+
+    <!-- Legend di bawah grafik -->
+    <div class="flex justify-center mt-4 gap-6 text-sm">
+        <div class="flex items-center">
+            <div class="w-8 h-0.5 bg-blue-500 mr-2"></div>
+            <span class="text-gray-600">Rawat Inap</span>
+        </div>
+        <div class="flex items-center">
+            <div class="w-8 h-0.5 bg-green-500 mr-2"></div>
+            <span class="text-gray-600">Rawat Jalan</span>
+        </div>
+        <div class="flex items-center">
+            <div class="w-8 h-0.5 bg-red-500 mr-2"></div>
+            <span class="text-gray-600">IGD</span>
+        </div>
     </div>
 </div>
 
@@ -114,31 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const kunjunganCtx = document.getElementById('kunjunganChart').getContext('2d');
     new Chart(kunjunganCtx, {
         type: 'line',
-        data: {
-            labels: Array.from({length: 27}, (_, i) => i + 1),
-            datasets: [{
-                label: 'Rawat Inap',
-                data: Array(27).fill(0),
-                borderColor: 'rgb(59, 130, 246)',
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.4
-            }, {
-                label: 'Rawat Jalan',
-                data: Array(27).fill(0),
-                borderColor: 'rgb(34, 197, 94)',
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.4
-            }, {
-                label: 'IGD',
-                data: Array(27).fill(0),
-                borderColor: 'rgb(239, 68, 68)',
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.4
-            }]
-        },
+        data: @json($data['chart_data']),
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -151,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 5
+                        stepSize: 1
                     },
                     grid: {
                         color: '#f0f0f0'
