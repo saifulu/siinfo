@@ -14,19 +14,9 @@ class KunjunganController extends Controller
         if (!Session::has('user')) {
             return redirect()->route('login');
         }
-
-        $data = [
-            'kunjungan_hari_ini' => 25,
-            'rata_rata_kunjungan' => 30,
-            'total_kunjungan_bulan' => 750,
-            'jenis_kunjungan' => [
-                'Umum' => 15,
-                'BPJS' => 8,
-                'Asuransi' => 2
-            ]
-        ];
-
-        return view('kunjungan.index', compact('data'));
+        
+        // Langsung arahkan ke dashboard
+        return $this->dashboard();
     }
 
     public function dashboard()
