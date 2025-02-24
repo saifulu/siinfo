@@ -1,98 +1,84 @@
-<div class="sticky top-0 z-50">
-    <div class="bg-white shadow-md mb-6 rounded-lg">
-        <div class="border-b">
-            <!-- Tombol menu untuk mobile -->
-            <div class="flex items-center sm:hidden px-4 py-2">
-                <button type="button" 
-                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        id="sidebar-toggle">
-                    <i class='bx bx-menu text-2xl'></i>
-                </button>
-            </div>
+<div class="navbar bg-base-100 fixed top-0 left-0 right-0 z-50 border-b">
+    <!-- Menu di kiri -->
+    <div class="navbar-start">
+        <!-- Mobile menu button -->
+        <div class="lg:hidden">
+            <button class="btn btn-ghost btn-circle" id="sidebar-toggle">
+                <i class='bx bx-menu text-2xl'></i>
+            </button>
+        </div>
 
-            <nav class="flex flex-wrap justify-between items-center px-4 sm:ml-64">
-                <!-- Menu Links -->
-                <div class="flex flex-1 space-x-4">
+        <!-- Menu Links - Tampil di desktop, sembunyi di mobile -->
+        <div class="hidden lg:flex lg:ml-64">
+            <ul class="menu menu-horizontal px-1 gap-2">
+                <li>
                     <a href="{{ route('kunjungan') }}" 
-                       class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('kunjungan*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-indigo-600 hover:border-indigo-500">
-                        <div class="flex items-center space-x-2">
-                            <i class='bx bx-user-pin text-xl'></i>
-                            <span>Kunjungan</span>
-                        </div>
+                       class="btn btn-ghost btn-sm {{ request()->is('kunjungan*') ? 'bg-base-200' : '' }}">
+                        <i class='bx bx-user-pin text-lg'></i>
+                        <span>Kunjungan</span>
                     </a>
-                    
+                </li>
+                <li>
                     <a href="{{ route('keuangan') }}"
-                       class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('keuangan*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-indigo-600 hover:border-indigo-500">
-                        <div class="flex items-center space-x-2">
-                            <i class='bx bx-money text-xl'></i>
-                            <span>Keuangan</span>
-                        </div>
+                       class="btn btn-ghost btn-sm {{ request()->is('keuangan*') ? 'bg-base-200' : '' }}">
+                        <i class='bx bx-money text-lg'></i>
+                        <span>Keuangan</span>
                     </a>
-                    
+                </li>
+                <li>
                     <a href="{{ route('apotek') }}"
-                       class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('apotek*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-indigo-600 hover:border-indigo-500">
-                        <div class="flex items-center space-x-2">
-                            <i class='bx bx-capsule text-xl'></i>
-                            <span>Apotek</span>
-                        </div>
+                       class="btn btn-ghost btn-sm {{ request()->is('apotek*') ? 'bg-base-200' : '' }}">
+                        <i class='bx bx-capsule text-lg'></i>
+                        <span>Apotek</span>
                     </a>
-                    
+                </li>
+                <li>
                     <a href="{{ route('hrd') }}"
-                       class="group inline-block px-6 py-4 text-sm font-medium transition-all duration-300 ease-in-out
-                              {{ request()->is('hrd*') ? 'text-indigo-600 border-b-[3px] border-indigo-500' : 'text-gray-600 border-b-[3px] border-transparent' }}
-                              hover:text-indigo-600 hover:border-indigo-500">
-                        <div class="flex items-center space-x-2">
-                            <i class='bx bx-user text-xl'></i>
-                            <span>HRD</span>
-                        </div>
+                       class="btn btn-ghost btn-sm {{ request()->is('hrd*') ? 'bg-base-200' : '' }}">
+                        <i class='bx bx-user text-lg'></i>
+                        <span>HRD</span>
                     </a>
-                </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Avatar dan Nama Aplikasi di kanan -->
+    <div class="navbar-end gap-4">
+        <!-- Nama Aplikasi -->
+        <div class="hidden md:block">
+            <a href="{{ route('dashboard') }}" class="text-xl font-bold text-primary hover:text-primary-focus transition-colors">
+                {{ env('APP_NAME') }}
+            </a>
+        </div>
 
-                <!-- User Menu -->
-                <div class="relative">
-                    @auth
-                        <button type="button" 
-                                class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-600 hover:bg-indigo-50 rounded-lg focus:outline-none"
-                                id="user-menu-button">
-                            <span class="font-medium">{{ Session::get('nama_pegawai') ?? 'Pegawai' }}</span>
-                            <i class='bx bx-chevron-down text-xl'></i>
-                        </button>
-
-                        <!-- Dropdown menu -->
-                        <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50" 
-                             id="user-dropdown">
-                            <div class="px-4 py-2 text-sm text-gray-700 border-b">
-                                <p class="font-medium">{{ Session::get('nama_pegawai') ?? 'Pegawai' }}</p>
-                                <p class="text-xs text-gray-500">{{ Session::get('jabatan') ?? '-' }}</p>
-                            </div>
-                            <a href="{{ route('profile') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">
-                                <i class='bx bx-user mr-2'></i>
-                                <span>Profil</span>
-                            </a>
-                            <a href="{{ route('settings') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">
-                                <i class='bx bx-cog mr-2'></i>
-                                <span>Pengaturan</span>
-                            </a>
-                            <hr class="my-1">
-                            <a href="{{ route('logout') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                <i class='bx bx-log-out mr-2'></i>
-                                <span>Keluar</span>
-                            </a>
-                        </div>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm text-gray-600">Masuk</a>
-                    @endauth
+        <!-- Avatar dropdown -->
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+                <div class="w-10 rounded-full">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Session::get('nama_pegawai')) }}&background=6366f1&color=fff" />
                 </div>
-            </nav>
+            </label>
+            <ul tabindex="0" class="dropdown-content menu menu-sm mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                <li>
+                    <a href="{{ route('profile') }}">
+                        <i class='bx bx-user'></i>
+                        Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('settings') }}">
+                        <i class='bx bx-cog'></i>
+                        Settings
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('logout') }}" class="text-error">
+                        <i class='bx bx-log-out'></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

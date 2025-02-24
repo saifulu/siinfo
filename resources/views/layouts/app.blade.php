@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
 <head>
     <title>@yield('title') - {{ config('app.name') }}</title>
     <meta charset="UTF-8">
