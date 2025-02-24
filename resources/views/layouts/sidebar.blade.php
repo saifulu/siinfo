@@ -1,27 +1,36 @@
-<aside class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 bg-indigo-700">
+<aside class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 bg-indigo-700">
     <div class="h-full px-3 py-4 overflow-y-auto">
-        <!-- Logo di sidebar -->
-        <div class="flex flex-col items-start gap-2 mb-5 pl-2.5">
-            <!-- Logo dan nama singkat -->
-            <a href="{{ route('dashboard') }}" class="flex items-center">
-                <i class='bx bx-plus-medical text-white text-2xl'></i>
-                <span class="ml-3 text-xl font-semibold text-white">SiINFO</span>
-            </a>
-            
-            <!-- Nama Instansi -->
+        <!-- Header Sidebar dengan Logo dan Nama RS -->
+        <div class="flex flex-col items-start gap-2 mb-6 px-2">
             @php
                 $setting = \App\Models\Setting::where('aktifkan', 'Yes')->first();
             @endphp
             @if($setting)
-                <div class="text-sm font-medium text-gray-200 leading-tight">
-                    {{ $setting->nama_instansi }}
+                <!-- Logo RS -->
+                <div class="flex items-center justify-center w-full mb-2">
+                    @if($setting->logo)
+                        <img src="data:image/png;base64,{{ base64_encode($setting->logo) }}" 
+                             alt="Logo RS" 
+                             class="h-16 w-auto object-contain">
+                    @else
+                        <i class='bx bx-plus-medical text-4xl text-white'></i>
+                    @endif
                 </div>
-                <div class="text-xs text-gray-300">
-                    {{ $setting->alamat_instansi }}
+                <!-- Nama dan Alamat RS -->
+                <div class="text-center w-full">
+                    <h2 class="text-lg font-bold text-white leading-tight line-clamp-2">
+                        {{ $setting->nama_instansi }}
+                    </h2>
+                    <p class="text-xs text-gray-300 mt-1 line-clamp-2">
+                        {{ $setting->alamat_instansi }}
+                    </p>
                 </div>
             @endif
         </div>
-        
+
+        <!-- Divider -->
+        <div class="w-full h-px bg-indigo-600 mb-6"></div>
+
         <!-- Mobile Menu - Tampil saat sidebar terbuka di mobile -->
         <div class="lg:hidden mb-4 border-b border-indigo-600 pb-4">
             <ul class="menu gap-2">
@@ -38,7 +47,7 @@
 
         <!-- Menu Sidebar -->
         <ul class="space-y-2">
-            <!-- Dasbor selalu muncul -->
+            <!-- Dasbor -->
             <li>
                 <a href="{{ route('dashboard') }}" 
                    class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group transition-colors duration-200">
@@ -154,8 +163,8 @@
                 </li>
             @endif
 
-            <!-- Menu Keluar selalu di bawah -->
-            <li class="mt-auto">
+            <!-- Menu Keluar -->
+            <li class="absolute bottom-4 left-0 right-0 px-3">
                 <a href="{{ route('logout') }}" 
                    class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-red-600 group transition-colors duration-200">
                     <i class='bx bx-log-out text-xl'></i>
@@ -165,44 +174,112 @@
         </ul>
     </div>
 
-    <!-- Tombol close untuk mobile -->
+    <!-- Tombol close untuk mobile & tablet -->
     <button type="button"
-            class="absolute top-4 right-4 lg:hidden text-white hover:text-gray-300"
+            class="absolute top-4 right-4 lg:hidden text-white hover:text-gray-300 focus:outline-none"
             id="sidebar-close">
         <i class='bx bx-x text-2xl'></i>
     </button>
 </aside>
 
-<!-- Overlay untuk mobile -->
-<div class="fixed inset-0 bg-gray-900 bg-opacity-50 z-30 hidden transition-opacity duration-300 lg:hidden"
+<!-- Overlay untuk mobile & tablet -->
+<div class="fixed inset-0 bg-gray-900 bg-opacity-50 z-30 hidden transition-opacity duration-300 md:hidden"
      id="sidebar-overlay">
 </div>
 
-<!-- Tambahkan script ini di app.blade.php atau buat file js terpisah -->
+<!-- Script untuk sidebar -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const sidebarClose = document.getElementById('sidebar-close');
     const sidebar = document.querySelector('aside');
     const overlay = document.getElementById('sidebar-overlay');
+    const body = document.body;
 
     function toggleSidebar() {
         sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
-        document.body.classList.toggle('overflow-hidden');
+        body.classList.toggle('overflow-hidden');
     }
 
-    if (sidebarToggle) sidebarToggle.addEventListener('click', toggleSidebar);
-    if (sidebarClose) sidebarClose.addEventListener('click', toggleSidebar);
-    if (overlay) overlay.addEventListener('click', toggleSidebar);
+    function closeSidebar() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+        body.classList.remove('overflow-hidden');
+    }
+
+    // Toggle sidebar
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+
+    // Close sidebar
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', closeSidebar);
+    }
+
+    // Close when clicking overlay
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeSidebar();
+        }
+    });
 
     // Handle window resize
     window.addEventListener('resize', () => {
-        if (window.innerWidth >= 1024) { // lg breakpoint
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
+        if (window.innerWidth >= 1024) {
+            closeSidebar();
+        }
+    });
+
+    // Handle swipe to close on mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    sidebar.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    sidebar.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        if (touchStartX - touchEndX > 50) { // Swipe left
+            closeSidebar();
         }
     });
 });
-</script> 
+</script>
+
+<style>
+/* Transisi smooth untuk sidebar */
+aside {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Animasi untuk overlay */
+#sidebar-overlay {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Prevent content shift when scrollbar appears/disappears */
+html {
+    scrollbar-gutter: stable;
+}
+
+/* Custom scrollbar untuk sidebar */
+aside::-webkit-scrollbar {
+    width: 4px;
+}
+
+aside::-webkit-scrollbar-track {
+    @apply bg-indigo-800;
+}
+
+aside::-webkit-scrollbar-thumb {
+    @apply bg-indigo-400 rounded-full hover:bg-indigo-300;
+}
+</style> 
