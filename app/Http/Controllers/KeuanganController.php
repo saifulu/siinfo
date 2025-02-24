@@ -24,89 +24,71 @@ class KeuanganController extends Controller
             return redirect()->route('login');
         }
 
-        // Menggunakan data yang sama dengan dashboard
-        $pendapatanHariIni = DB::table('tagihan_sadewa')
-            ->whereRaw('DATE(tgl_bayar) = CURDATE()')
-            ->sum('jumlah_bayar');
-
-        // Query pendapatan bulan ini
-        $pendapatanBulanIni = DB::table('tagihan_sadewa')
-            ->whereRaw('MONTH(tgl_bayar) = MONTH(CURRENT_DATE())')
-            ->whereRaw('YEAR(tgl_bayar) = YEAR(CURRENT_DATE())')
-            ->sum('jumlah_bayar');
-
-        // Query pendapatan tahun ini
-        $pendapatanTahunIni = DB::table('tagihan_sadewa')
-            ->whereRaw('YEAR(tgl_bayar) = YEAR(CURRENT_DATE())')
-            ->sum('jumlah_bayar');
-
-        // Query pengeluaran hari ini
-        $pengeluaranHariIni = DB::table('pengeluaran_harian')
-            ->whereRaw('DATE(tanggal) = CURDATE()')
-            ->sum('biaya');
-
-        // Query pengeluaran bulan ini
-        $pengeluaranBulanIni = DB::table('pengeluaran_harian')
-            ->whereRaw('MONTH(tanggal) = MONTH(CURRENT_DATE())')
-            ->whereRaw('YEAR(tanggal) = YEAR(CURRENT_DATE())')
-            ->sum('biaya');
-
-        // Query pengeluaran tahun ini
-        $pengeluaranTahunIni = DB::table('pengeluaran_harian')
-            ->whereRaw('YEAR(tanggal) = YEAR(NOW())')
-            ->sum('biaya');
-
-        // Query total piutang
-        $totalPiutang = DB::table('piutang_pasien')
-            ->whereRaw('YEAR(tgl_piutang) = YEAR(CURDATE())')
-            ->sum('sisapiutang');
-
-        // Query piutang jatuh tempo (30 hari)
-        $piutangJatuhTempo = DB::table('piutang_pasien')
-            ->whereRaw('DATEDIFF(CURDATE(), tgl_piutang) >= 30')
-            ->whereRaw('sisapiutang > 0')
-            ->sum('sisapiutang');
-
-        // Query piutang lunas
-        $piutangLunas = DB::table('piutang_pasien')
-            ->whereRaw('YEAR(tgl_piutang) = YEAR(CURDATE())')
-            ->whereRaw('sisapiutang = 0')
-            ->sum('totalpiutang');
-
+        // Data untuk cards
         $data = [
-            'pendapatan' => [
-                'hari_ini' => $pendapatanHariIni,
-                'bulan_ini' => $pendapatanBulanIni,
-                'tahun_ini' => $pendapatanTahunIni
+            'pendapatan_hari' => 0,
+            'pendapatan_bulan' => 2000000,
+            'pendapatan_tahun' => 2000000,
+            'pengeluaran_hari' => 0,
+            'pengeluaran_bulan' => 31000,
+            'pengeluaran_tahun' => 99000,
+            'total_piutang' => 1531884,
+            'piutang_jatuh_tempo' => 1775208,
+            'piutang_lunas' => 0,
+            
+            // Data untuk grafik laba rugi
+            'chart_data' => [
+                'labels' => ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                'datasets' => [
+                    [
+                        'label' => 'Laba Bersih',
+                        'data' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        'borderColor' => 'rgb(34, 197, 94)',
+                        'borderWidth' => 2,
+                        'tension' => 0.4
+                    ],
+                    [
+                        'label' => 'Total Beban',
+                        'data' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        'borderColor' => 'rgb(234, 179, 8)',
+                        'borderWidth' => 2,
+                        'tension' => 0.4
+                    ],
+                    [
+                        'label' => 'Total Pendapatan',
+                        'data' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        'borderColor' => 'rgb(59, 130, 246)',
+                        'borderWidth' => 2,
+                        'tension' => 0.4
+                    ]
+                ]
             ],
-            'pengeluaran' => [
-                'hari_ini' => $pengeluaranHariIni,
-                'bulan_ini' => $pengeluaranBulanIni,
-                'tahun_ini' => $pengeluaranTahunIni
-            ],
-            'piutang' => [
-                'total' => $totalPiutang,
-                'jatuh_tempo' => $piutangJatuhTempo,
-                'lunas' => $piutangLunas
-            ],
-            'transaksi_terakhir' => [
-                [
-                    'tanggal' => '2024-02-16',
-                    'keterangan' => 'Pembayaran Rawat Inap',
-                    'jumlah' => 2500000,
-                    'tipe' => 'masuk'
-                ],
-                [
-                    'tanggal' => '2024-02-16',
-                    'keterangan' => 'Pembayaran Obat',
-                    'jumlah' => 1500000,
-                    'tipe' => 'masuk'
-                ],
-                [
-                    'tanggal' => '2024-02-16',
-                    'keterangan' => 'Pembelian Supplies',
-                    'jumlah' => 3000000,
-                    'tipe' => 'keluar'
+
+            // Data untuk grafik arus kas
+            'arus_kas_data' => [
+                'labels' => ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                'datasets' => [
+                    [
+                        'label' => 'Saldo Keseluruhan',
+                        'data' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        'borderColor' => 'rgb(34, 197, 94)',
+                        'borderWidth' => 1.5,
+                        'tension' => 0.4
+                    ],
+                    [
+                        'label' => 'Saldo Kas Keluar',
+                        'data' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        'borderColor' => 'rgb(239, 68, 68)',
+                        'borderWidth' => 1.5,
+                        'tension' => 0.4
+                    ],
+                    [
+                        'label' => 'Saldo Kas Masuk',
+                        'data' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        'borderColor' => 'rgb(59, 130, 246)', 
+                        'borderWidth' => 1.5,
+                        'tension' => 0.4
+                    ]
                 ]
             ]
         ];

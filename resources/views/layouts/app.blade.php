@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100">
+<body class="min-h-screen bg-gray-50">
     <!-- Top Navigation Bar -->
     @include('layouts.topnav')
     
@@ -16,16 +16,9 @@
     @include('layouts.sidebar')
     
     <!-- Main Content -->
-    <div class="sm:ml-64">
-        <div class="p-4">
-            <!-- Page Header -->
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">@yield('header')</h1>
-            </div>
-
-            @yield('content')
-        </div>
-    </div>
+    <main class="p-4 transition-all duration-300 md:ml-64">
+        @yield('content')
+    </main>
 
     <!-- Script untuk toggle sidebar -->
     <script>
