@@ -1,177 +1,141 @@
 <aside class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 bg-indigo-700">
-    <div class="h-full px-3 py-4 overflow-y-auto">
-        <!-- Header Sidebar dengan Logo dan Nama RS -->
-        <div class="flex flex-col items-start gap-2 mb-6 px-2">
-            @php
-                $setting = \App\Models\Setting::where('aktifkan', 'Yes')->first();
-            @endphp
-            @if($setting)
-                <!-- Logo RS -->
-                <div class="flex items-center justify-center w-full mb-2">
-                    @if($setting->logo)
-                        <img src="data:image/png;base64,{{ base64_encode($setting->logo) }}" 
-                             alt="Logo RS" 
-                             class="h-16 w-auto object-contain">
-                    @else
-                        <i class='bx bx-plus-medical text-4xl text-white'></i>
-                    @endif
-                </div>
-                <!-- Nama dan Alamat RS -->
-                <div class="text-center w-full">
-                    <h2 class="text-lg font-bold text-white leading-tight line-clamp-2">
-                        {{ $setting->nama_instansi }}
-                    </h2>
-                    <p class="text-xs text-gray-300 mt-1 line-clamp-2">
-                        {{ $setting->alamat_instansi }}
-                    </p>
-                </div>
-            @endif
-        </div>
+    <!-- Logo dan Nama Aplikasi -->
+    <div class="flex items-center gap-2 px-6 py-4 border-b border-indigo-600">
+        <i class='bx bx-plus-medical text-2xl text-white'></i>
+        <span class="text-lg font-semibold text-white">SiINFO</span>
+    </div>
 
-        <!-- Divider -->
-        <div class="w-full h-px bg-indigo-600 mb-6"></div>
-
-        <!-- Mobile Menu - Tampil saat sidebar terbuka di mobile -->
-        <div class="lg:hidden mb-4 border-b border-indigo-600 pb-4">
-            <ul class="menu gap-2">
-                <li>
-                    <a href="{{ route('kunjungan') }}" 
-                       class="text-gray-300 hover:bg-indigo-600 {{ request()->is('kunjungan*') ? 'bg-indigo-600' : '' }}">
-                        <i class='bx bx-user-pin'></i>
-                        <span>Kunjungan</span>
-                    </a>
-                </li>
-                <!-- Menu lainnya untuk mobile -->
-            </ul>
-        </div>
-
-        <!-- Menu Sidebar -->
-        <ul class="space-y-2">
-            <!-- Dasbor -->
-            <li>
+    <!-- Menu Container -->
+    <div class="h-[calc(100vh-64px)] overflow-y-auto px-4">
+        <!-- Menu Groups -->
+        <div class="py-4 space-y-1">
+            <!-- Dashboard -->
+            <div class="mb-4">
                 <a href="{{ route('dashboard') }}" 
-                   class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group transition-colors duration-200">
+                   class="flex items-center px-4 py-2.5 text-gray-300 rounded-lg hover:bg-indigo-600 group transition-all">
                     <i class='bx bx-grid-alt text-xl'></i>
-                    <span class="ml-3">Dasbor</span>
+                    <span class="ml-3 font-medium">Dashboard</span>
                 </a>
-            </li>
+            </div>
 
             @if(request()->is('kunjungan*'))
-                <!-- Menu Kunjungan -->
-                <li>
+                <!-- Kunjungan Section -->
+                <div class="space-y-1 pb-2">
+                    <div class="px-4 py-2">
+                        <span class="text-xs font-semibold text-indigo-300 uppercase tracking-wider">Kunjungan</span>
+                    </div>
+
                     <a href="{{ route('kunjungan.dashboard') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-home text-xl'></i>
                         <span class="ml-3">Dashboard Kunjungan</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('kunjungan.rawatjalan') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-walk text-xl'></i>
                         <span class="ml-3">Rawat Jalan</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('kunjungan.rawatinap') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-bed text-xl'></i>
                         <span class="ml-3">Rawat Inap</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('kunjungan.igd') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-plus-medical text-xl'></i>
                         <span class="ml-3">IGD</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('kunjungan.operasi') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-knife text-xl'></i>
                         <span class="ml-3">Kamar Operasi</span>
                     </a>
-                </li>
-                <!-- Sub menu Laporan -->
-                <li>
+                </div>
+
+                <!-- Laporan Section -->
+                <div class="space-y-1">
+                    <div class="px-4 py-2">
+                        <span class="text-xs font-semibold text-indigo-300 uppercase tracking-wider">Laporan</span>
+                    </div>
+
                     <a href="{{ route('kunjungan.laporan.harian') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-file text-xl'></i>
                         <span class="ml-3">Laporan Harian</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('kunjungan.laporan.bulanan') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-calendar text-xl'></i>
                         <span class="ml-3">Laporan Bulanan</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('kunjungan.laporan.tahunan') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-calendar-star text-xl'></i>
                         <span class="ml-3">Laporan Tahunan</span>
                     </a>
-                </li>
+                </div>
             @endif
 
             @if(request()->is('keuangan*'))
                 <!-- Menu Keuangan -->
-                <li>
+                <div class="py-4 space-y-1">
+                    <div class="px-4 py-2">
+                        <span class="text-xs font-semibold text-indigo-300 uppercase tracking-wider">Keuangan</span>
+                    </div>
+
                     <a href="{{ route('keuangan.dashboard') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-home text-xl'></i>
                         <span class="ml-3">Dashboard Keuangan</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('keuangan.bukukas') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-book text-xl'></i>
                         <span class="ml-3">Buku Kas</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('keuangan.penerimaan') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-download text-xl'></i>
                         <span class="ml-3">Penerimaan</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('keuangan.pengeluaran') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-upload text-xl'></i>
                         <span class="ml-3">Pengeluaran</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('keuangan.laporan') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-file text-xl'></i>
                         <span class="ml-3">Laporan</span>
                     </a>
-                </li>
-                <li>
+
                     <a href="{{ route('keuangan.akun') }}" 
-                       class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
+                       class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-indigo-600 group">
                         <i class='bx bx-list-ul text-xl'></i>
                         <span class="ml-3">Akun</span>
                     </a>
-                </li>
+                </div>
             @endif
+        </div>
 
-            <!-- Menu Keluar -->
-            <li class="absolute bottom-4 left-0 right-0 px-3">
-                <a href="{{ route('logout') }}" 
-                   class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-red-600 group transition-colors duration-200">
-                    <i class='bx bx-log-out text-xl'></i>
-                    <span class="ml-3">Keluar</span>
-                </a>
-            </li>
-        </ul>
+        <!-- Menu Keluar -->
+        <div class="absolute bottom-4 left-0 right-0 px-3">
+            <a href="{{ route('logout') }}" 
+               class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-red-600 group transition-colors duration-200">
+                <i class='bx bx-log-out text-xl'></i>
+                <span class="ml-3">Keluar</span>
+            </a>
+        </div>
     </div>
 
     <!-- Tombol close untuk mobile & tablet -->
