@@ -5,39 +5,100 @@
 
 @section('content')
 <div class="flex flex-col h-[calc(100vh-5rem)] gap-3">
-    <!-- Cards Utama -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <!-- Cards Container dengan Grid dan Gap -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
         <!-- Card Rawat Inap -->
-        <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow">
-            <div class="card-body p-3 sm:p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="card-title text-blue-600 text-base sm:text-lg">Rawat Inap</h2>
-                    <i class='bx bx-bed text-blue-100 text-xl sm:text-2xl'></i>
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-blue-100">
+            <div class="p-3">
+                <!-- Header Card -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 bg-blue-50 rounded-lg">
+                            <i class='bx bx-bed text-xl text-blue-600'></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-800">Rawat Inap</h2>
+                            <p class="text-xs text-gray-500">Update terakhir: {{ $data['update_time'] }}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-ghost btn-xs">
+                        <i class='bx bx-dots-vertical-rounded text-lg'></i>
+                    </button>
                 </div>
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs sm:text-sm text-gray-600">Total Pasien</span>
-                        <span class="text-base sm:text-lg font-semibold text-blue-600">{{ $data['rawat_inap']['total_pasien'] }}</span>
+
+                <!-- Total, Masuk, dan Keluar dalam satu baris horizontal -->
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-600">Total</span>
+                        <span class="text-xl font-bold text-blue-600">{{ $data['rawat_inap']['total_pasien'] }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs sm:text-sm text-gray-600">Pasien Masuk</span>
-                        <span class="text-base sm:text-lg font-semibold">{{ $data['rawat_inap']['pasien_masuk'] }}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-600">Masuk</span>
+                        <span class="text-xl font-bold text-green-600">{{ $data['rawat_inap']['pasien_masuk'] }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs sm:text-sm text-gray-600">Pasien Keluar</span>
-                        <span class="text-base sm:text-lg font-semibold">{{ $data['rawat_inap']['pasien_keluar'] }}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-600">Keluar</span>
+                        <span class="text-xl font-bold text-red-600">{{ $data['rawat_inap']['pasien_keluar'] }}</span>
                     </div>
+                </div>
+
+                <!-- Progress dan Tren -->
+                <div class="space-y-2">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-gray-600">Okupansi</span>
+                            <span class="text-blue-600 font-medium">{{ $data['rawat_inap']['okupansi'] }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                            <div class="bg-blue-600 h-1.5 rounded-full" 
+                                 style="width: {{ $data['rawat_inap']['okupansi'] }}%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            {{ $data['rawat_inap']['tt_terisi'] }} dari {{ $data['rawat_inap']['total_tt'] }} tempat tidur terisi
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-gray-600">Rata-rata Rawat</span>
+                        <span class="text-blue-600 font-medium">{{ number_format($data['rawat_inap']['avg_los'], 1) }} Hari</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Card -->
+            <div class="border-t border-gray-100 p-2">
+                <div class="flex justify-between items-center text-xs">
+                    <div class="flex items-center gap-1">
+                        <i class='bx bx-trending-up text-green-500'></i>
+                        <span class="text-gray-600">vs kemarin</span>
+                        <span class="text-green-500 font-medium">+12.5%</span>
+                    </div>
+                    <a href="{{ route('kunjungan.rawatinap') }}" 
+                       class="text-blue-600 hover:text-blue-700 font-medium">
+                        Lihat Detail →
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Card Rawat Jalan -->
-        <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow">
-            <div class="card-body p-3 sm:p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="card-title text-green-600 text-base sm:text-lg">Rawat Jalan</h2>
-                    <i class='bx bx-walk text-green-100 text-xl sm:text-2xl'></i>
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-green-100">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 bg-green-50 rounded-lg">
+                            <i class='bx bx-walk text-xl text-green-600'></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-800">Rawat Jalan</h2>
+                            <p class="text-xs text-gray-500">Update terakhir: {{ $data['update_time'] }}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-ghost btn-xs">
+                        <i class='bx bx-dots-vertical-rounded text-lg'></i>
+                    </button>
                 </div>
+
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Total Kunjungan</span>
@@ -53,15 +114,40 @@
                     </div>
                 </div>
             </div>
+
+            <div class="border-t border-gray-100 p-2">
+                <div class="flex justify-between items-center text-xs">
+                    <div class="flex items-center gap-1">
+                        <i class='bx bx-trending-up text-green-500'></i>
+                        <span class="text-gray-600">vs kemarin</span>
+                        <span class="text-green-500 font-medium">+12.5%</span>
+                    </div>
+                    <a href="{{ route('kunjungan.rawatjalan') }}" 
+                       class="text-green-600 hover:text-green-700 font-medium">
+                        Lihat Detail →
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Card IGD -->
-        <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
-            <div class="card-body p-3 sm:p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="card-title text-red-600 text-base sm:text-lg">IGD</h2>
-                    <i class='bx bx-plus-medical text-red-100 text-xl sm:text-2xl'></i>
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-red-100">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 bg-red-50 rounded-lg">
+                            <i class='bx bx-plus-medical text-xl text-red-600'></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-800">IGD</h2>
+                            <p class="text-xs text-gray-500">Update terakhir: {{ $data['update_time'] }}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-ghost btn-xs">
+                        <i class='bx bx-dots-vertical-rounded text-lg'></i>
+                    </button>
                 </div>
+
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Total Kunjungan</span>
@@ -75,6 +161,20 @@
                         <span class="text-xs sm:text-sm text-gray-600">Pasien Pulang</span>
                         <span class="text-base sm:text-lg font-semibold">{{ $data['igd']['pasien_pulang'] }}</span>
                     </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100 p-2">
+                <div class="flex justify-between items-center text-xs">
+                    <div class="flex items-center gap-1">
+                        <i class='bx bx-trending-up text-green-500'></i>
+                        <span class="text-gray-600">vs kemarin</span>
+                        <span class="text-green-500 font-medium">+12.5%</span>
+                    </div>
+                    <a href="{{ route('kunjungan.igd') }}" 
+                       class="text-red-600 hover:text-red-700 font-medium">
+                        Lihat Detail →
+                    </a>
                 </div>
             </div>
         </div>

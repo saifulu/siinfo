@@ -102,6 +102,33 @@ class KunjunganController extends Controller
             'date' => Carbon::today()->toDateString()
         ]);
 
+        // Query untuk menghitung okupansi
+        $kamar_stats = DB::select("
+            SELECT 
+                (SELECT COUNT(*) 
+                 FROM kamar_inap ki 
+                 WHERE ki.stts_pulang = '-') as terisi,
+                (SELECT COUNT(*) 
+                 FROM kamar 
+                 WHERE statusdata = '1') as total_tt
+        ")[0];
+
+        // Hitung persentase okupansi
+        $okupansi = $kamar_stats->total_tt > 0 ? round(($kamar_stats->terisi / $kamar_stats->total_tt) * 100, 1) : 0;
+
+        // Query untuk menghitung rata-rata lama rawat
+        $avg_los = DB::select("
+            SELECT ROUND(AVG(
+                CASE 
+                    WHEN tgl_keluar IS NOT NULL 
+                    THEN DATEDIFF(tgl_keluar, tgl_masuk)
+                    ELSE DATEDIFF(CURRENT_DATE(), tgl_masuk)
+                END
+            ), 1) as avg_los
+            FROM kamar_inap 
+            WHERE tgl_masuk >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+        ")[0];
+
         // Data untuk grafik tren kunjungan
         $chart_data = [
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -129,10 +156,15 @@ class KunjunganController extends Controller
 
         // Data untuk view
         $data = [
+            'update_time' => Carbon::now()->format('H:i'),
             'rawat_inap' => [
                 'total_pasien' => $total_pasien,
                 'pasien_masuk' => $pasien_masuk,
-                'pasien_keluar' => $pasien_keluar
+                'pasien_keluar' => $pasien_keluar,
+                'okupansi' => $okupansi,
+                'total_tt' => $kamar_stats->total_tt,
+                'tt_terisi' => $kamar_stats->terisi,
+                'avg_los' => $avg_los->avg_los ?? 0
             ],
             'rawat_jalan' => [
                 'total_kunjungan' => $rawat_jalan->total_kunjungan ?? 0,
