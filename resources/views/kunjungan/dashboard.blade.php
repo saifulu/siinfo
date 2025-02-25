@@ -68,10 +68,13 @@
             <!-- Footer Card -->
             <div class="border-t border-gray-100 p-2">
                 <div class="flex justify-between items-center text-xs">
-                    <div class="flex items-center gap-1">
-                        <i class='bx bx-trending-up text-green-500'></i>
+                    <div class="flex items-center gap-1" 
+                         title="Perubahan dari hari kemarin ke hari ini">
+                        <i class='bx {{ $data['rawat_inap']['perubahan']['total'] >= 0 ? 'bx-trending-up text-green-500' : 'bx-trending-down text-red-500' }}'></i>
                         <span class="text-gray-600">vs kemarin</span>
-                        <span class="text-green-500 font-medium">+12.5%</span>
+                        <span class="{{ $data['rawat_inap']['perubahan']['total'] >= 0 ? 'text-green-500' : 'text-red-500' }} font-medium">
+                            {{ $data['rawat_inap']['perubahan']['total'] >= 0 ? '+' : '' }}{{ $data['rawat_inap']['perubahan']['total'] }}%
+                        </span>
                     </div>
                     <a href="{{ route('kunjungan.rawatinap') }}" 
                        class="text-blue-600 hover:text-blue-700 font-medium">
@@ -117,10 +120,13 @@
 
             <div class="border-t border-gray-100 p-2">
                 <div class="flex justify-between items-center text-xs">
-                    <div class="flex items-center gap-1">
-                        <i class='bx bx-trending-up text-green-500'></i>
+                    <div class="flex items-center gap-1" 
+                         title="Perubahan dari hari kemarin ke hari ini">
+                        <i class='bx {{ $data['rawat_jalan']['perubahan']['total'] >= 0 ? 'bx-trending-up text-green-500' : 'bx-trending-down text-red-500' }}'></i>
                         <span class="text-gray-600">vs kemarin</span>
-                        <span class="text-green-500 font-medium">+12.5%</span>
+                        <span class="{{ $data['rawat_jalan']['perubahan']['total'] >= 0 ? 'text-green-500' : 'text-red-500' }} font-medium">
+                            {{ $data['rawat_jalan']['perubahan']['total'] >= 0 ? '+' : '' }}{{ $data['rawat_jalan']['perubahan']['total'] }}%
+                        </span>
                     </div>
                     <a href="{{ route('kunjungan.rawatjalan') }}" 
                        class="text-green-600 hover:text-green-700 font-medium">
@@ -166,10 +172,13 @@
 
             <div class="border-t border-gray-100 p-2">
                 <div class="flex justify-between items-center text-xs">
-                    <div class="flex items-center gap-1">
-                        <i class='bx bx-trending-up text-green-500'></i>
+                    <div class="flex items-center gap-1" 
+                         title="Perubahan dari hari kemarin ke hari ini">
+                        <i class='bx {{ $data['igd']['perubahan']['total'] >= 0 ? 'bx-trending-up text-green-500' : 'bx-trending-down text-red-500' }}'></i>
                         <span class="text-gray-600">vs kemarin</span>
-                        <span class="text-green-500 font-medium">+12.5%</span>
+                        <span class="{{ $data['igd']['perubahan']['total'] >= 0 ? 'text-green-500' : 'text-red-500' }} font-medium">
+                            {{ $data['igd']['perubahan']['total'] >= 0 ? '+' : '' }}{{ $data['igd']['perubahan']['total'] }}%
+                        </span>
                     </div>
                     <a href="{{ route('kunjungan.igd') }}" 
                        class="text-red-600 hover:text-red-700 font-medium">
