@@ -17,15 +17,15 @@
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Total Pasien</span>
-                        <span class="text-base sm:text-lg font-semibold text-blue-600">3</span>
+                        <span class="text-base sm:text-lg font-semibold text-blue-600">{{ $data['rawat_inap']['total_pasien'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Pasien Masuk</span>
-                        <span class="text-base sm:text-lg font-semibold">0</span>
+                        <span class="text-base sm:text-lg font-semibold">{{ $data['rawat_inap']['pasien_masuk'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Pasien Keluar</span>
-                        <span class="text-base sm:text-lg font-semibold">0</span>
+                        <span class="text-base sm:text-lg font-semibold">{{ $data['rawat_inap']['pasien_keluar'] }}</span>
                     </div>
                 </div>
             </div>
@@ -41,15 +41,15 @@
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Total Kunjungan</span>
-                        <span class="text-base sm:text-lg font-semibold text-green-600">0</span>
+                        <span class="text-base sm:text-lg font-semibold text-green-600">{{ $data['rawat_jalan']['total_kunjungan'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Pasien Baru</span>
-                        <span class="text-base sm:text-lg font-semibold">0</span>
+                        <span class="text-base sm:text-lg font-semibold">{{ $data['rawat_jalan']['pasien_baru'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Pasien Lama</span>
-                        <span class="text-base sm:text-lg font-semibold">0</span>
+                        <span class="text-base sm:text-lg font-semibold">{{ $data['rawat_jalan']['pasien_lama'] }}</span>
                     </div>
                 </div>
             </div>
@@ -65,15 +65,15 @@
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Total Kunjungan</span>
-                        <span class="text-base sm:text-lg font-semibold text-red-600">0</span>
+                        <span class="text-base sm:text-lg font-semibold text-red-600">{{ $data['igd']['total_kunjungan'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Lanjut Rawat Inap</span>
-                        <span class="text-base sm:text-lg font-semibold">0</span>
+                        <span class="text-base sm:text-lg font-semibold">{{ $data['igd']['lanjut_rawat_inap'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs sm:text-sm text-gray-600">Pasien Pulang</span>
-                        <span class="text-base sm:text-lg font-semibold">0</span>
+                        <span class="text-base sm:text-lg font-semibold">{{ $data['igd']['pasien_pulang'] }}</span>
                     </div>
                 </div>
             </div>
@@ -160,4 +160,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
+
+@php
+    \Log::info('Data di View:', [
+        'rawat_inap' => $data['rawat_inap'] ?? 'tidak ada data'
+    ]);
+@endphp
 @endsection
