@@ -19,7 +19,7 @@
                         </div>
                         <div>
                             <h2 class="text-base font-semibold text-gray-800">Rawat Inap</h2>
-                            <p class="text-xs text-gray-500">Update terakhir: {{ $data['update_time'] }}</p>
+                            <p class="text-xs text-gray-500">Update terakhir: <span id="current-time-ri"></span></p>
                         </div>
                     </div>
                     <button class="btn btn-ghost btn-xs">
@@ -91,7 +91,7 @@
                         </div>
                         <div>
                             <h2 class="text-base font-semibold text-gray-800">Rawat Jalan</h2>
-                            <p class="text-xs text-gray-500">Update terakhir: {{ $data['update_time'] }}</p>
+                            <p class="text-xs text-gray-500">Update terakhir: <span id="current-time-rj"></span></p>
                         </div>
                     </div>
                     <button class="btn btn-ghost btn-xs">
@@ -140,7 +140,7 @@
                         </div>
                         <div>
                             <h2 class="text-base font-semibold text-gray-800">IGD</h2>
-                            <p class="text-xs text-gray-500">Update terakhir: {{ $data['update_time'] }}</p>
+                            <p class="text-xs text-gray-500">Update terakhir: <span id="current-time-igd"></span></p>
                         </div>
                     </div>
                     <button class="btn btn-ghost btn-xs">
@@ -258,6 +258,24 @@ document.addEventListener('DOMContentLoaded', function() {
         chart.resize();
     }).observe(ctx.canvas);
 });
+
+// Fungsi untuk update waktu
+function updateTime() {
+    const now = new Date();
+    const time = now.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    // Update semua elemen waktu
+    document.getElementById('current-time-ri').textContent = time;
+    document.getElementById('current-time-rj').textContent = time;
+    document.getElementById('current-time-igd').textContent = time;
+}
+
+// Update waktu setiap detik
+updateTime();
+setInterval(updateTime, 1000);
 </script>
 @endpush
 
