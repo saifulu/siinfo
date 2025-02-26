@@ -24,14 +24,127 @@ class KeuanganController extends Controller
             return redirect()->route('login');
         }
 
+        // Set timezone dan aktifkan query log
+        date_default_timezone_set('Asia/Jakarta');
+        DB::enableQueryLog();
+
+        // Query pendapatan hari ini
+        $pendapatan_hari = DB::select("
+            SELECT 
+                COALESCE(SUM(jumlah_bayar), 0) AS total_pembayaran 
+            FROM 
+                tagihan_sadewa 
+            WHERE 
+                DATE(tgl_bayar) = CURDATE()
+        ")[0]->total_pembayaran;
+
+        // Query pendapatan bulan ini (dari tanggal 1)
+        $pendapatan_bulan = DB::select("
+            SELECT 
+                COALESCE(SUM(jumlah_bayar), 0) AS total_pembayaran 
+            FROM 
+                tagihan_sadewa 
+            WHERE 
+                DATE(tgl_bayar) >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                AND DATE(tgl_bayar) <= CURRENT_DATE()
+        ")[0]->total_pembayaran;
+
+        // Query pendapatan tahun ini (dari 1 Januari)
+        $pendapatan_tahun = DB::select("
+            SELECT 
+                COALESCE(SUM(jumlah_bayar), 0) AS total_pembayaran 
+            FROM 
+                tagihan_sadewa 
+            WHERE 
+                DATE(tgl_bayar) >= DATE_FORMAT(CURRENT_DATE(), '%Y-01-01')
+                AND DATE(tgl_bayar) <= CURRENT_DATE()
+        ")[0]->total_pembayaran;
+
+        // Query pengeluaran hari ini
+        $pengeluaran_hari = DB::select("
+            SELECT 
+                COALESCE(SUM(pengeluaran_harian.biaya), 0) AS total_pengeluaran
+            FROM 
+                pengeluaran_harian
+            INNER JOIN 
+                petugas ON pengeluaran_harian.nip = petugas.nip
+            INNER JOIN 
+                kategori_pengeluaran_harian ON pengeluaran_harian.kode_kategori = kategori_pengeluaran_harian.kode_kategori
+            WHERE 
+                DATE(pengeluaran_harian.tanggal) = CURDATE()
+        ")[0]->total_pengeluaran;
+
+        // Query pengeluaran bulan ini (dari tanggal 1)
+        $pengeluaran_bulan = DB::select("
+            SELECT 
+                COALESCE(SUM(pengeluaran_harian.biaya), 0) AS total_pengeluaran
+            FROM 
+                pengeluaran_harian
+            INNER JOIN 
+                petugas ON pengeluaran_harian.nip = petugas.nip
+            INNER JOIN 
+                kategori_pengeluaran_harian ON pengeluaran_harian.kode_kategori = kategori_pengeluaran_harian.kode_kategori
+            WHERE 
+                DATE(pengeluaran_harian.tanggal) >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                AND DATE(pengeluaran_harian.tanggal) <= CURRENT_DATE()
+        ")[0]->total_pengeluaran;
+
+        // Query pengeluaran tahun ini (dari 1 Januari)
+        $pengeluaran_tahun = DB::select("
+            SELECT 
+                COALESCE(SUM(pengeluaran_harian.biaya), 0) AS total_pengeluaran
+            FROM 
+                pengeluaran_harian
+            INNER JOIN 
+                petugas ON pengeluaran_harian.nip = petugas.nip
+            INNER JOIN 
+                kategori_pengeluaran_harian ON pengeluaran_harian.kode_kategori = kategori_pengeluaran_harian.kode_kategori
+            WHERE 
+                DATE(pengeluaran_harian.tanggal) >= DATE_FORMAT(CURRENT_DATE(), '%Y-01-01')
+                AND DATE(pengeluaran_harian.tanggal) <= CURRENT_DATE()
+        ")[0]->total_pengeluaran;
+
+        // Debug query
+        \Log::info('Debug Query Pendapatan:', [
+            'tanggal' => date('Y-m-d H:i:s'),
+            'hari_ini' => [
+                'query' => "SELECT SUM(jumlah_bayar) FROM tagihan_sadewa WHERE DATE(tgl_bayar) = CURDATE()",
+                'hasil' => $pendapatan_hari
+            ],
+            'bulan_ini' => [
+                'query' => "SELECT SUM(jumlah_bayar) FROM tagihan_sadewa WHERE DATE(tgl_bayar) >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')",
+                'hasil' => $pendapatan_bulan
+            ],
+            'tahun_ini' => [
+                'query' => "SELECT SUM(jumlah_bayar) FROM tagihan_sadewa WHERE DATE(tgl_bayar) >= DATE_FORMAT(CURRENT_DATE(), '%Y-01-01')",
+                'hasil' => $pendapatan_tahun
+            ]
+        ]);
+
+        \Log::info('Debug Query Pengeluaran:', [
+            'tanggal' => date('Y-m-d H:i:s'),
+            'hari_ini' => [
+                'query' => "SELECT SUM(biaya) FROM pengeluaran_harian WHERE DATE(tanggal) = CURDATE()",
+                'hasil' => $pengeluaran_hari
+            ],
+            'bulan_ini' => [
+                'query' => "SELECT SUM(biaya) FROM pengeluaran_harian WHERE DATE(tanggal) >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')",
+                'hasil' => $pengeluaran_bulan
+            ],
+            'tahun_ini' => [
+                'query' => "SELECT SUM(biaya) FROM pengeluaran_harian WHERE DATE(tanggal) >= DATE_FORMAT(CURRENT_DATE(), '%Y-01-01')",
+                'hasil' => $pengeluaran_tahun
+            ]
+        ]);
+
         // Data untuk cards
         $data = [
-            'pendapatan_hari' => 0,
-            'pendapatan_bulan' => 2000000,
-            'pendapatan_tahun' => 2000000,
-            'pengeluaran_hari' => 0,
-            'pengeluaran_bulan' => 31000,
-            'pengeluaran_tahun' => 99000,
+            'pendapatan_hari' => $pendapatan_hari,
+            'pendapatan_bulan' => $pendapatan_bulan,
+            'pendapatan_tahun' => $pendapatan_tahun,
+            'pengeluaran_hari' => $pengeluaran_hari,
+            'pengeluaran_bulan' => $pengeluaran_bulan,
+            'pengeluaran_tahun' => $pengeluaran_tahun,
             'total_piutang' => 1531884,
             'piutang_jatuh_tempo' => 1775208,
             'piutang_lunas' => 0,
