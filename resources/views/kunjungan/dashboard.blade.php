@@ -189,41 +189,19 @@
         </div>
     </div>
 
-    <!-- Grafik Kunjungan -->
-    <div class="bg-white hover:bg-gray-50 transition-colors duration-300 rounded-lg shadow-md p-4 sm:p-6 flex-grow">
-        <div class="flex flex-col h-full">
-            <!-- Header Grafik -->
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Tren Kunjungan</h3>
-                <select id="filterTren" 
-                        class="select select-bordered select-sm w-32"
-                        onchange="window.location.href='?filter=' + this.value">
-                    <option value="hari" {{ $data['current_filter'] == 'hari' ? 'selected' : '' }}>Hari</option>
-                    <option value="minggu" {{ $data['current_filter'] == 'minggu' ? 'selected' : '' }}>Minggu</option>
-                    <option value="bulan" {{ $data['current_filter'] == 'bulan' ? 'selected' : '' }}>Bulan</option>
-                </select>
-            </div>
-            
-            <!-- Container Grafik -->
-            <div class="flex-grow relative min-h-[300px]">
-                <canvas id="kunjunganChart" class="absolute inset-0 w-full h-full"></canvas>
-            </div>
-
-            <!-- Legend di bawah grafik -->
-            <div class="flex justify-center mt-4 gap-6 text-sm pt-2">
-                <div class="flex items-center">
-                    <div class="w-8 h-0.5 bg-blue-500 mr-2"></div>
-                    <span class="text-gray-600">Rawat Inap</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="w-8 h-0.5 bg-green-500 mr-2"></div>
-                    <span class="text-gray-600">Rawat Jalan</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="w-8 h-0.5 bg-red-500 mr-2"></div>
-                    <span class="text-gray-600">IGD</span>
-                </div>
-            </div>
+    <!-- Tren Kunjungan Section -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-800">Tren Kunjungan</h3>
+            <select id="filterTren" class="rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <option value="minggu" {{ $filter === 'minggu' ? 'selected' : '' }}>Minggu</option>
+                <option value="bulan" {{ $filter === 'bulan' ? 'selected' : '' }}>Bulan</option>
+                <option value="tahun" {{ $filter === 'tahun' ? 'selected' : '' }}>Tahun</option>
+            </select>
+        </div>
+        <div class="h-[400px] relative">
+            <div class="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent z-0"></div>
+            <canvas id="trendChart"></canvas>
         </div>
     </div>
 </div>
@@ -231,41 +209,131 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('kunjunganChart').getContext('2d');
-    const chart = new Chart(ctx, {
+    const ctxTrend = document.getElementById('trendChart').getContext('2d');
+    const chartData = @json($chartData);
+    
+    // Gradient untuk area di bawah garis
+    const gradientRawatJalan = ctxTrend.createLinearGradient(0, 0, 0, 400);
+    gradientRawatJalan.addColorStop(0, 'rgba(34, 197, 94, 0.2)');
+    gradientRawatJalan.addColorStop(1, 'rgba(34, 197, 94, 0)');
+    
+    const gradientRawatInap = ctxTrend.createLinearGradient(0, 0, 0, 400);
+    gradientRawatInap.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+    gradientRawatInap.addColorStop(1, 'rgba(59, 130, 246, 0)');
+    
+    const gradientIGD = ctxTrend.createLinearGradient(0, 0, 0, 400);
+    gradientIGD.addColorStop(0, 'rgba(239, 68, 68, 0.2)');
+    gradientIGD.addColorStop(1, 'rgba(239, 68, 68, 0)');
+
+    // Update dataset styling
+    chartData.datasets = chartData.datasets.map(dataset => {
+        if (dataset.label === 'Rawat Jalan') {
+            return {
+                ...dataset,
+                borderWidth: 2,
+                fill: true,
+                backgroundColor: gradientRawatJalan,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#22c55e',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2
+            };
+        } else if (dataset.label === 'Rawat Inap') {
+            return {
+                ...dataset,
+                borderWidth: 2,
+                fill: true,
+                backgroundColor: gradientRawatInap,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#3b82f6',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2
+            };
+        } else {
+            return {
+                ...dataset,
+                borderWidth: 2,
+                fill: true,
+                backgroundColor: gradientIGD,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#ef4444',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2
+            };
+        }
+    });
+    
+    const trendChart = new Chart(ctxTrend, {
         type: 'line',
-        data: @json($data['chart_data']),
+        data: chartData,
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
             plugins: {
                 legend: {
-                    display: false
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 15,
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 12
+                        }
+                    }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
+                    border: {
+                        display: false
                     },
                     grid: {
-                        color: '#f0f0f0'
+                        color: 'rgba(0,0,0,0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 11
+                        },
+                        padding: 8,
+                        color: '#64748b'
                     }
                 },
                 x: {
+                    border: {
+                        display: false
+                    },
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 11
+                        },
+                        padding: 8,
+                        color: '#64748b'
                     }
                 }
             }
         }
     });
 
-    // Handle resize
-    new ResizeObserver(() => {
-        chart.resize();
-    }).observe(ctx.canvas);
+    // Handle filter change
+    document.getElementById('filterTren').addEventListener('change', function() {
+        window.location.href = `{{ route('kunjungan.dashboard') }}?filter=${this.value}`;
+    });
 });
 
 // Fungsi untuk update waktu

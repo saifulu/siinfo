@@ -8,11 +8,25 @@
     <!-- Cards Utama -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <!-- Card Pendapatan -->
-        <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow">
-            <div class="card-body p-3 sm:p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="card-title text-green-600 text-base sm:text-lg">Pendapatan</h2>
-                    <i class='bx bx-trending-up text-green-100 text-xl sm:text-2xl'></i>
+        <div class="relative overflow-hidden bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-300/80 via-emerald-100/50 to-teal-200/60"></div>
+            <div class="absolute inset-0 bg-[linear-gradient(110deg,transparent_0.8px,#ffffff10_0.8px),linear-gradient(-110deg,transparent_0.8px,#ffffff20_0.8px)] bg-[length:10px_10px]"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-emerald-400/10 via-transparent to-teal-300/10"></div>
+            <div class="relative p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3.5 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 shadow-lg rounded-xl flex items-center justify-center ring-2 ring-emerald-400/20">
+                            <i class='bx bxs-dollar-circle text-2xl text-emerald-100'></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-800">Pendapatan</h2>
+                            <div class="flex items-center gap-2 text-xs">
+                                <i class='bx bx-refresh text-gray-500'></i>
+                                <span class="text-gray-500">Update: {{ now()->format('H:i') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <i class='bx bxs-trending-up text-emerald-600 text-xl sm:text-2xl opacity-80'></i>
                 </div>
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
@@ -32,11 +46,25 @@
         </div>
 
         <!-- Card Pengeluaran -->
-        <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow">
-            <div class="card-body p-3 sm:p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="card-title text-red-600 text-base sm:text-lg">Pengeluaran</h2>
-                    <i class='bx bx-trending-down text-red-100 text-xl sm:text-2xl'></i>
+        <div class="relative overflow-hidden bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <div class="absolute inset-0 bg-gradient-to-br from-rose-300/80 via-rose-100/50 to-pink-200/60"></div>
+            <div class="absolute inset-0 bg-[linear-gradient(110deg,transparent_0.8px,#ffffff10_0.8px),linear-gradient(-110deg,transparent_0.8px,#ffffff20_0.8px)] bg-[length:10px_10px]"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-rose-400/10 via-transparent to-pink-300/10"></div>
+            <div class="relative p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3.5 bg-gradient-to-br from-rose-500 via-rose-600 to-pink-600 shadow-lg rounded-xl flex items-center justify-center ring-2 ring-rose-400/20">
+                            <i class='bx bxs-wallet text-2xl text-rose-100'></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-800">Pengeluaran</h2>
+                            <div class="flex items-center gap-2 text-xs">
+                                <i class='bx bx-refresh text-gray-500'></i>
+                                <span class="text-gray-500">Update: {{ now()->format('H:i') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <i class='bx bxs-trending-down text-rose-600 text-xl sm:text-2xl opacity-80'></i>
                 </div>
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
@@ -56,11 +84,25 @@
         </div>
 
         <!-- Card Piutang -->
-        <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
-            <div class="card-body p-3 sm:p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="card-title text-blue-600 text-base sm:text-lg">Piutang</h2>
-                    <i class='bx bx-wallet text-blue-100 text-xl sm:text-2xl'></i>
+        <div class="relative overflow-hidden bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <div class="absolute inset-0 bg-gradient-to-br from-violet-300/80 via-violet-100/50 to-purple-200/60"></div>
+            <div class="absolute inset-0 bg-[linear-gradient(110deg,transparent_0.8px,#ffffff10_0.8px),linear-gradient(-110deg,transparent_0.8px,#ffffff20_0.8px)] bg-[length:10px_10px]"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-violet-400/10 via-transparent to-purple-300/10"></div>
+            <div class="relative p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3.5 bg-gradient-to-br from-violet-500 via-violet-600 to-purple-600 shadow-lg rounded-xl flex items-center justify-center ring-2 ring-violet-400/20">
+                            <i class='bx bxs-credit-card text-2xl text-indigo-100'></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-800">Piutang</h2>
+                            <div class="flex items-center gap-2 text-xs">
+                                <i class='bx bx-refresh text-gray-500'></i>
+                                <span class="text-gray-500">Update: {{ now()->format('H:i') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <i class='bx bxs-wallet text-violet-600 text-xl sm:text-2xl opacity-80'></i>
                 </div>
                 <div class="space-y-1">
                     <div class="flex justify-between items-center">
@@ -321,6 +363,102 @@
         @endif
     </div>
 </div>
+
+<!-- Key Metrics Section -->
+<div class="grid grid-cols-1 gap-6 mt-6">
+    <!-- Header dengan Filter -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <h2 class="text-lg font-semibold text-gray-800">Key Metrics</h2>
+            <span class="text-sm text-gray-500">Oct 01, 2024 - Dec 30, 2024</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-white rounded-full hover:bg-gray-50">All</button>
+            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-white rounded-full hover:bg-gray-50">7d</button>
+            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-white rounded-full shadow-sm bg-gray-100">30d</button>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="border-b border-gray-200">
+        <nav class="flex gap-8">
+            <button class="px-1 py-4 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600">
+                Workplace Happiness Index
+            </button>
+            <button class="px-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                Absenteeism Overview
+            </button>
+            <button class="px-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                Employee Turnover Insights
+            </button>
+            <button class="px-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                Training Completion Rate
+            </button>
+        </nav>
+    </div>
+
+    <!-- Graph Section -->
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <div class="h-[300px]">
+            <canvas id="metricsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Data Tables Section -->
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Attendance Table -->
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-800">Attendance</h3>
+                <button class="p-2 text-gray-400 hover:text-gray-600">
+                    <i class='bx bx-filter'></i>
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-xs text-gray-500">
+                            <th class="pb-3">Employee</th>
+                            <th class="pb-3">Employee ID</th>
+                            <th class="pb-3">Job Title</th>
+                            <th class="pb-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-t border-gray-100">
+                            <td class="py-3">John Doe</td>
+                            <td class="py-3">EMP001</td>
+                            <td class="py-3">Developer</td>
+                            <td class="py-3"><span class="px-2 py-1 text-xs text-green-700 bg-green-50 rounded-full">Active</span></td>
+                        </tr>
+                        <!-- Add more rows as needed -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Daily Time Limits -->
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-800">Daily Time Limits</h3>
+                <button class="text-sm text-gray-500 hover:text-gray-700">See All</button>
+            </div>
+            <div class="space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-100"></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium">Alex Hales</span>
+                            <span class="text-sm text-gray-500">9:00 AM</span>
+                        </div>
+                        <span class="text-sm text-gray-500">10 Hour</span>
+                    </div>
+                </div>
+                <!-- Add more items as needed -->
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -421,6 +559,93 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // New Metrics Chart
+    const metricsCtx = document.getElementById('metricsChart').getContext('2d');
+    new Chart(metricsCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+                label: 'Actual',
+                data: [10000, 15000, 8000, 20000, 25000, 20000, 25000],
+                borderColor: 'rgb(99, 102, 241)',
+                tension: 0.4,
+                borderWidth: 2
+            },
+            {
+                label: 'Target',
+                data: [12000, 12000, 12000, 12000, 12000, 12000, 12000],
+                borderColor: 'rgb(229, 231, 235)',
+                borderDash: [5, 5],
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#f0f0f0'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
 });
 </script>
-@endpush 
+@endpush
+
+<style>
+/* Glassmorphism effect */
+.glass-effect {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Custom shadows */
+.custom-shadow {
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.05),
+        0 4px 6px -2px rgba(0, 0, 0, 0.025),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient animations */
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+    animation: gradient 15s ease infinite;
+    background-size: 200% 200%;
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 8px 10px -6px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+</style> 

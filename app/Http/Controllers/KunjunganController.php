@@ -25,14 +25,97 @@ class KunjunganController extends Controller
             return redirect()->route('login');
         }
 
+        $filter = request('filter', 'minggu'); // Default filter minggu
+        
+        // Query untuk tren kunjungan berdasarkan filter
+        $trendQuery = match($filter) {
+            'minggu' => "
+                SELECT 
+                    DATE(reg_periksa.tgl_registrasi) as tanggal,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'Ralan' THEN 1 END) as rawat_jalan,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'Ranap' THEN 1 END) as rawat_inap,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'IGD' THEN 1 END) as igd
+                FROM reg_periksa
+                WHERE 
+                    reg_periksa.tgl_registrasi >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
+                    AND reg_periksa.tgl_registrasi <= CURRENT_DATE()
+                GROUP BY DATE(reg_periksa.tgl_registrasi)
+                ORDER BY tanggal
+            ",
+            'bulan' => "
+                SELECT 
+                    DATE(reg_periksa.tgl_registrasi) as tanggal,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'Ralan' THEN 1 END) as rawat_jalan,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'Ranap' THEN 1 END) as rawat_inap,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'IGD' THEN 1 END) as igd
+                FROM reg_periksa
+                WHERE 
+                    reg_periksa.tgl_registrasi >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+                    AND reg_periksa.tgl_registrasi <= CURRENT_DATE()
+                GROUP BY DATE(reg_periksa.tgl_registrasi)
+                ORDER BY tanggal
+            ",
+            'tahun' => "
+                SELECT 
+                    DATE_FORMAT(reg_periksa.tgl_registrasi, '%Y-%m') as tanggal,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'Ralan' THEN 1 END) as rawat_jalan,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'Ranap' THEN 1 END) as rawat_inap,
+                    COUNT(CASE WHEN reg_periksa.status_lanjut = 'IGD' THEN 1 END) as igd
+                FROM reg_periksa
+                WHERE 
+                    reg_periksa.tgl_registrasi >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                    AND reg_periksa.tgl_registrasi <= CURRENT_DATE()
+                GROUP BY DATE_FORMAT(reg_periksa.tgl_registrasi, '%Y-%m')
+                ORDER BY tanggal
+            ",
+        };
+
+        $trendData = DB::select($trendQuery);
+
+        // Format data untuk chart
+        $labels = [];
+        $rawatJalan = [];
+        $rawatInap = [];
+        $igd = [];
+
+        foreach ($trendData as $data) {
+            $labels[] = $filter === 'tahun' 
+                ? Carbon::createFromFormat('Y-m', $data->tanggal)->format('M Y')
+                : Carbon::createFromFormat('Y-m-d', $data->tanggal)->format('d M');
+            $rawatJalan[] = $data->rawat_jalan;
+            $rawatInap[] = $data->rawat_inap;
+            $igd[] = $data->igd;
+        }
+
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Rawat Jalan',
+                    'data' => $rawatJalan,
+                    'borderColor' => 'rgb(34, 197, 94)',
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'Rawat Inap',
+                    'data' => $rawatInap,
+                    'borderColor' => 'rgb(59, 130, 246)',
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'IGD',
+                    'data' => $igd,
+                    'borderColor' => 'rgb(239, 68, 68)',
+                    'tension' => 0.4
+                ]
+            ]
+        ];
+
         // Aktifkan Query Log
         DB::enableQueryLog();
 
         // Set timezone untuk memastikan tanggal benar
         date_default_timezone_set('Asia/Jakarta');
-
-        // Ambil parameter filter (default: hari)
-        $filter = request('filter', 'hari');
 
         // Query untuk IGD
         $igd = DB::table('reg_periksa')
@@ -305,7 +388,7 @@ class KunjunganController extends Controller
             'igd' => $data['igd']
         ]);
 
-        return view('kunjungan.dashboard', compact('data'));
+        return view('kunjungan.dashboard', compact('data', 'chartData', 'filter'));
     }
 
     public function rawatJalan()
