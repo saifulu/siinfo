@@ -104,6 +104,46 @@ class KeuanganController extends Controller
                 AND DATE(pengeluaran_harian.tanggal) <= CURRENT_DATE()
         ")[0]->total_pengeluaran;
 
+        // Query untuk total piutang
+        $total_piutang = DB::select("
+            SELECT 
+                COALESCE(SUM(totalpiutang), 0) as total_piutang
+            FROM 
+                piutang_pasien
+            WHERE 
+                status = 'Belum Lunas'
+        ")[0]->total_piutang;
+
+        // Query untuk sisa piutang (jatuh tempo)
+        $sisa_piutang = DB::select("
+            SELECT 
+                COALESCE(SUM(
+                    totalpiutang - uangmuka - 
+                    COALESCE((
+                        SELECT SUM(besar_cicilan) 
+                        FROM bayar_piutang 
+                        WHERE bayar_piutang.no_rawat = piutang_pasien.no_rawat
+                    ), 0) -
+                    COALESCE((
+                        SELECT SUM(diskon_piutang) 
+                        FROM bayar_piutang 
+                        WHERE bayar_piutang.no_rawat = piutang_pasien.no_rawat
+                    ), 0) -
+                    COALESCE((
+                        SELECT SUM(tidak_terbayar) 
+                        FROM bayar_piutang 
+                        WHERE bayar_piutang.no_rawat = piutang_pasien.no_rawat
+                    ), 0)
+                ), 0) as sisa_piutang
+            FROM 
+                piutang_pasien
+            WHERE 
+                status = 'Belum Lunas'
+        ")[0]->sisa_piutang;
+
+        // Query untuk piutang lunas (total - sisa)
+        $piutang_lunas = $total_piutang - $sisa_piutang;
+
         // Debug query
         \Log::info('Debug Query Pendapatan:', [
             'tanggal' => date('Y-m-d H:i:s'),
@@ -137,6 +177,22 @@ class KeuanganController extends Controller
             ]
         ]);
 
+        \Log::info('Debug Query Piutang:', [
+            'tanggal' => date('Y-m-d H:i:s'),
+            'total_piutang' => [
+                'query' => "SELECT SUM(totalpiutang) FROM piutang_pasien WHERE status = 'Belum Lunas'",
+                'hasil' => $total_piutang
+            ],
+            'sisa_piutang' => [
+                'query' => "SELECT kompleks query sisa piutang...",
+                'hasil' => $sisa_piutang
+            ],
+            'piutang_lunas' => [
+                'kalkulasi' => 'total_piutang - sisa_piutang',
+                'hasil' => $piutang_lunas
+            ]
+        ]);
+
         // Data untuk cards
         $data = [
             'pendapatan_hari' => $pendapatan_hari,
@@ -145,9 +201,9 @@ class KeuanganController extends Controller
             'pengeluaran_hari' => $pengeluaran_hari,
             'pengeluaran_bulan' => $pengeluaran_bulan,
             'pengeluaran_tahun' => $pengeluaran_tahun,
-            'total_piutang' => 1531884,
-            'piutang_jatuh_tempo' => 1775208,
-            'piutang_lunas' => 0,
+            'total_piutang' => $total_piutang,
+            'piutang_jatuh_tempo' => $sisa_piutang,
+            'piutang_lunas' => $piutang_lunas,
             
             // Data untuk grafik laba rugi
             'chart_data' => [
