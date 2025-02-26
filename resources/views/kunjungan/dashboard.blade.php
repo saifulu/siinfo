@@ -194,14 +194,47 @@
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-800">Tren Kunjungan</h3>
             <select id="filterTren" class="rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                <option value="minggu" {{ $filter === 'minggu' ? 'selected' : '' }}>Minggu</option>
-                <option value="bulan" {{ $filter === 'bulan' ? 'selected' : '' }}>Bulan</option>
-                <option value="tahun" {{ $filter === 'tahun' ? 'selected' : '' }}>Tahun</option>
+                <option value="minggu" {{ $data['filter'] === 'minggu' ? 'selected' : '' }}>Minggu</option>
+                <option value="bulan" {{ $data['filter'] === 'bulan' ? 'selected' : '' }}>Bulan</option>
+                <option value="tahun" {{ $data['filter'] === 'tahun' ? 'selected' : '' }}>Tahun</option>
             </select>
         </div>
         <div class="h-[400px] relative">
             <div class="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent z-0"></div>
             <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Grid Container untuk Grafik Kunjungan & Cara Bayar -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Grafik Kunjungan Poli -->
+        <div class="lg:col-span-3 bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-800">Kunjungan per Poliklinik</h3>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i class='bx bx-calendar'></i>
+                    <span>{{ now()->format('d M Y') }}</span>
+                </div>
+            </div>
+            <div class="h-[350px] relative">
+                <div class="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent z-0"></div>
+                <canvas id="poliChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Grafik Cara Bayar -->
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-800">Cara Bayar</h3>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i class='bx bx-wallet'></i>
+                    <span>{{ now()->format('d M Y') }}</span>
+                </div>
+            </div>
+            <div class="h-[300px] relative flex items-center justify-center">
+                <canvas id="bayarChart"></canvas>
+            </div>
+            <div class="mt-6 space-y-3 px-2" id="bayarLegend"></div>
         </div>
     </div>
 </div>
@@ -210,7 +243,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctxTrend = document.getElementById('trendChart').getContext('2d');
-    const chartData = @json($chartData);
+    const chartData = @json($data['chart_data']);
     
     // Gradient untuk area di bawah garis
     const gradientRawatJalan = ctxTrend.createLinearGradient(0, 0, 0, 400);
@@ -353,6 +386,108 @@ function updateTime() {
 // Update waktu setiap detik
 updateTime();
 setInterval(updateTime, 1000);
+
+// Grafik Kunjungan Poli
+const poliCtx = document.getElementById('poliChart').getContext('2d');
+const poliData = @json($data['poli_chart']);
+
+new Chart(poliCtx, {
+    type: 'bar',
+    data: poliData,
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                align: 'end',
+                labels: {
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    padding: 15,
+                    font: {
+                        family: "'Inter', sans-serif",
+                        size: 12
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    font: {
+                        family: "'Inter', sans-serif"
+                    }
+                },
+                stacked: false
+            },
+            y: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    font: {
+                        family: "'Inter', sans-serif"
+                    }
+                },
+                stacked: false
+            }
+        },
+        barPercentage: 0.8,
+        categoryPercentage: 0.9
+    }
+});
+
+// Grafik Cara Bayar
+const bayarCtx = document.getElementById('bayarChart').getContext('2d');
+const bayarData = {
+    labels: ['BPJS', 'Umum', 'Asuransi'],
+    datasets: [{
+        data: [300, 50, 100],
+        backgroundColor: [
+            'rgba(34, 197, 94, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(5, 150, 105, 0.8)',
+        ],
+        borderWidth: 0,
+        cutout: '75%',
+        borderRadius: 4,
+    }]
+};
+
+new Chart(bayarCtx, {
+    type: 'doughnut',
+    data: bayarData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Custom Legend untuk Cara Bayar
+const bayarLegend = document.getElementById('bayarLegend');
+bayarData.labels.forEach((label, index) => {
+    const item = document.createElement('div');
+    item.className = 'flex items-center justify-between text-sm';
+    item.innerHTML = `
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full" style="background-color: ${bayarData.datasets[0].backgroundColor[index]}"></div>
+            <span class="text-gray-700">${label}</span>
+        </div>
+        <span class="font-medium">${bayarData.datasets[0].data[index]}</span>
+    `;
+    bayarLegend.appendChild(item);
+});
 </script>
 @endpush
 

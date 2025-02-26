@@ -315,27 +315,63 @@ class KunjunganController extends Controller
                 : 0
         ];
 
-        // Data untuk grafik tren kunjungan
-        $chart_data = [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        // Query untuk kunjungan per poli
+        $kunjungan_poli = DB::select("
+            SELECT 
+                p.nm_poli,
+                COUNT(rp.no_rawat) as total_kunjungan,
+                SUM(CASE WHEN rp.stts IN ('Sudah', 'Sudah Dilayani') THEN 1 ELSE 0 END) as sudah_dilayani,
+                SUM(CASE WHEN rp.status_bayar = 'Sudah Bayar' THEN 1 ELSE 0 END) as sudah_bayar
+            FROM reg_periksa rp
+            JOIN poliklinik p ON rp.kd_poli = p.kd_poli
+            WHERE DATE(rp.tgl_registrasi) = CURDATE()
+            AND rp.kd_poli != 'IGDK'
+            AND rp.stts != 'Batal'
+            GROUP BY p.kd_poli, p.nm_poli
+            ORDER BY total_kunjungan DESC
+            LIMIT 10
+        ");
+
+        // Debug query
+        \Log::info('Query Kunjungan Poli:', [
+            'sql' => "
+                SELECT 
+                    p.nm_poli,
+                    COUNT(rp.no_rawat) as total_kunjungan,
+                    SUM(CASE WHEN rp.stts IN ('Sudah', 'Sudah Dilayani') THEN 1 ELSE 0 END) as sudah_dilayani,
+                    SUM(CASE WHEN rp.status_bayar = 'Sudah Bayar' THEN 1 ELSE 0 END) as sudah_bayar
+                FROM reg_periksa rp
+                JOIN poliklinik p ON rp.kd_poli = p.kd_poli
+                WHERE DATE(rp.tgl_registrasi) = CURDATE()
+                AND rp.stts != 'Batal'
+                GROUP BY p.kd_poli, p.nm_poli
+                ORDER BY total_kunjungan DESC
+                LIMIT 10
+            ",
+            'hasil' => $kunjungan_poli
+        ]);
+
+        // Format data untuk grafik poli dengan 3 bar per poli
+        $poli_data = [
+            'labels' => array_map(fn($item) => $item->nm_poli, $kunjungan_poli),
             'datasets' => [
                 [
-                    'label' => 'Rawat Inap',
-                    'data' => [3, 2, 2, 1, 5, 3],
-                    'borderColor' => 'rgb(59, 130, 246)',
-                    'tension' => 0.4
+                    'label' => 'Total Kunjungan',
+                    'data' => array_map(fn($item) => $item->total_kunjungan, $kunjungan_poli),
+                    'backgroundColor' => 'rgba(99, 102, 241, 0.8)',
+                    'borderRadius' => 8,
                 ],
                 [
-                    'label' => 'Rawat Jalan',
-                    'data' => [5, 4, 3, 2, 4, 3],
-                    'borderColor' => 'rgb(34, 197, 94)',
-                    'tension' => 0.4
+                    'label' => 'Sudah Dilayani',
+                    'data' => array_map(fn($item) => $item->sudah_dilayani, $kunjungan_poli),
+                    'backgroundColor' => 'rgba(34, 197, 94, 0.8)',
+                    'borderRadius' => 8,
                 ],
                 [
-                    'label' => 'IGD',
-                    'data' => [2, 3, 4, 3, 2, 1],
-                    'borderColor' => 'rgb(239, 68, 68)',
-                    'tension' => 0.4
+                    'label' => 'Sudah Bayar',
+                    'data' => array_map(fn($item) => $item->sudah_bayar, $kunjungan_poli),
+                    'backgroundColor' => 'rgba(249, 115, 22, 0.8)',
+                    'borderRadius' => 8,
                 ]
             ]
         ];
@@ -365,8 +401,9 @@ class KunjunganController extends Controller
                 'pasien_pulang' => $igd->pasien_pulang ?? 0,
                 'perubahan' => $perubahan_igd
             ],
-            'current_filter' => $filter,
-            'chart_data' => $chart_data
+            'filter' => request('filter', 'minggu'),
+            'chart_data' => $chartData,
+            'poli_chart' => $poli_data
         ];
 
         // Debug untuk memastikan data IGD
@@ -388,7 +425,7 @@ class KunjunganController extends Controller
             'igd' => $data['igd']
         ]);
 
-        return view('kunjungan.dashboard', compact('data', 'chartData', 'filter'));
+        return view('kunjungan.dashboard', compact('data'));
     }
 
     public function rawatJalan()
