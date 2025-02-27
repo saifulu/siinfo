@@ -445,20 +445,7 @@ new Chart(poliCtx, {
 
 // Grafik Cara Bayar
 const bayarCtx = document.getElementById('bayarChart').getContext('2d');
-const bayarData = {
-    labels: ['BPJS', 'Umum', 'Asuransi'],
-    datasets: [{
-        data: [300, 50, 100],
-        backgroundColor: [
-            'rgba(34, 197, 94, 0.8)',
-            'rgba(16, 185, 129, 0.8)',
-            'rgba(5, 150, 105, 0.8)',
-        ],
-        borderWidth: 0,
-        cutout: '75%',
-        borderRadius: 4,
-    }]
-};
+const bayarData = @json($data['bayar_chart']);
 
 new Chart(bayarCtx, {
     type: 'doughnut',
@@ -469,6 +456,13 @@ new Chart(bayarCtx, {
         plugins: {
             legend: {
                 display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `${context.label}: ${context.raw} pasien`;
+                    }
+                }
             }
         }
     }
@@ -476,16 +470,28 @@ new Chart(bayarCtx, {
 
 // Custom Legend untuk Cara Bayar
 const bayarLegend = document.getElementById('bayarLegend');
+bayarLegend.innerHTML = ''; // Clear existing content
 bayarData.labels.forEach((label, index) => {
     const item = document.createElement('div');
-    item.className = 'flex items-center justify-between text-sm';
+    item.className = 'flex items-center justify-between text-sm py-2 px-3 rounded-lg transition-all duration-200 hover:bg-gray-50 cursor-pointer';
     item.innerHTML = `
         <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-full" style="background-color: ${bayarData.datasets[0].backgroundColor[index]}"></div>
+            <div class="w-4 h-4 rounded-full shadow-sm ring-1 ring-black/5" style="background-color: ${bayarData.datasets[0].backgroundColor[index]}"></div>
             <span class="text-gray-700">${label}</span>
         </div>
-        <span class="font-medium">${bayarData.datasets[0].data[index]}</span>
+        <span class="font-semibold text-gray-900">${bayarData.datasets[0].data[index].toLocaleString('id-ID')} pasien</span>
     `;
+    
+    // Highlight chart segment on hover
+    item.addEventListener('mouseenter', () => {
+        bayarChart.setActiveElements([{ datasetIndex: 0, index: index }]);
+        bayarChart.update();
+    });
+    item.addEventListener('mouseleave', () => {
+        bayarChart.setActiveElements([]);
+        bayarChart.update();
+    });
+    
     bayarLegend.appendChild(item);
 });
 </script>

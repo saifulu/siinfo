@@ -351,6 +351,39 @@ class KunjunganController extends Controller
             'hasil' => $kunjungan_poli
         ]);
 
+        // Query untuk cara bayar
+        $cara_bayar = DB::table('reg_periksa as rp')
+            ->join('penjab as p', 'rp.kd_pj', '=', 'p.kd_pj')
+            ->select('p.png_jawab', DB::raw('COUNT(*) as total'))
+            ->whereDate('rp.tgl_registrasi', Carbon::today())
+            ->groupBy('p.png_jawab')
+            ->get();
+
+        // Format data untuk grafik cara bayar
+        $bayar_data = [
+            'labels' => $cara_bayar->pluck('png_jawab')->toArray(),
+            'datasets' => [[
+                'data' => $cara_bayar->pluck('total')->toArray(),
+                'backgroundColor' => [
+                    'rgba(59, 130, 246, 0.9)',  // Biru
+                    'rgba(34, 197, 94, 0.9)',   // Hijau
+                    'rgba(249, 115, 22, 0.9)',  // Orange
+                    'rgba(239, 68, 68, 0.9)',   // Merah
+                    'rgba(168, 85, 247, 0.9)',  // Ungu
+                    'rgba(236, 72, 153, 0.9)'   // Pink
+                ],
+                'borderWidth' => 0,
+                'cutout' => '75%',
+                'borderRadius' => 4,
+            ]]
+        ];
+
+        // Debug query cara bayar
+        \Log::info('Query Cara Bayar:', [
+            'query' => DB::getQueryLog(),
+            'hasil' => $cara_bayar
+        ]);
+
         // Format data untuk grafik poli dengan 3 bar per poli
         $poli_data = [
             'labels' => array_map(fn($item) => $item->nm_poli, $kunjungan_poli),
@@ -403,7 +436,8 @@ class KunjunganController extends Controller
             ],
             'filter' => request('filter', 'minggu'),
             'chart_data' => $chartData,
-            'poli_chart' => $poli_data
+            'poli_chart' => $poli_data,
+            'bayar_chart' => $bayar_data
         ];
 
         // Debug untuk memastikan data IGD
@@ -461,5 +495,40 @@ class KunjunganController extends Controller
     public function operasi()
     {
         return view('kunjungan.operasi');
+    }
+
+    public function getCaraBayar()
+    {
+        try {
+            $caraBayar = DB::table('reg_periksa as rp')
+                ->join('penjab as p', 'rp.kd_pj', '=', 'p.kd_pj')
+                ->whereDate('rp.tgl_registrasi', now())
+                ->select('p.png_jawab', DB::raw('COUNT(*) as total'))
+                ->groupBy('p.png_jawab')
+                ->get();
+
+            // Debug: Lihat hasil query
+            \Log::info('Query Result:', $caraBayar->toArray());
+
+            // Transform data untuk format yang dibutuhkan chart
+            $formattedData = $caraBayar->map(function($item) {
+                return [
+                    'name' => $item->png_jawab,
+                    'total' => (int)$item->total
+                ];
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $formattedData
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in getCaraBayar: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengambil data cara bayar'
+            ], 500);
+        }
     }
 } 
