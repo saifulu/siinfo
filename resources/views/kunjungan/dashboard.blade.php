@@ -4,12 +4,24 @@
 @section('header', 'Dashboard Kunjungan')
 
 @section('content')
-<div class="flex flex-col h-[calc(100vh-5rem)] gap-3">
+<div class="flex flex-col gap-6 max-w-[1920px] mx-auto px-6 py-4">
+    <!-- Header Dashboard -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Dashboard Kunjungan</h1>
+            <p class="text-sm text-gray-500 mt-1">Statistik kunjungan pasien hari ini</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-gray-500">Terakhir diperbarui:</span>
+            <span class="text-sm font-medium text-gray-700" id="last-update"></span>
+        </div>
+    </div>
+
     <!-- Cards Container dengan Grid dan Gap -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
         <!-- Card Rawat Inap -->
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-blue-100">
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-blue-100/50 backdrop-blur-sm">
             <div class="p-3">
                 <!-- Header Card -->
                 <div class="flex items-center justify-between mb-3">
@@ -85,7 +97,7 @@
         </div>
 
         <!-- Card Rawat Jalan -->
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-green-100">
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-green-100/50 backdrop-blur-sm">
             <div class="p-3">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
@@ -137,7 +149,7 @@
         </div>
 
         <!-- Card IGD -->
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-red-100">
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-red-100/50 backdrop-blur-sm">
             <div class="p-3">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
@@ -190,7 +202,7 @@
     </div>
 
     <!-- Tren Kunjungan Section -->
-    <div class="bg-white rounded-xl shadow-sm p-6">
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100/50 backdrop-blur-sm">
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-800">Tren Kunjungan</h3>
             <select id="filterTren" class="rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
@@ -206,9 +218,9 @@
     </div>
 
     <!-- Grid Container untuk Grafik Kunjungan & Cara Bayar -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-7 gap-6">
         <!-- Grafik Kunjungan Poli -->
-        <div class="lg:col-span-3 bg-white rounded-xl shadow-sm p-6">
+        <div class="lg:col-span-5 bg-white rounded-xl shadow-sm p-6 border border-gray-100/50 backdrop-blur-sm">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Kunjungan per Poliklinik</h3>
                 <div class="flex items-center gap-2 text-sm text-gray-600">
@@ -223,7 +235,7 @@
         </div>
 
         <!-- Grafik Cara Bayar -->
-        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-6">
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100/50 backdrop-blur-sm">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Cara Bayar</h3>
                 <div class="flex items-center gap-2 text-sm text-gray-600">
@@ -316,12 +328,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: {
                         usePointStyle: true,
                         pointStyle: 'circle',
-                        padding: 15,
+                        padding: 20,
                         font: {
                             family: "'Inter', sans-serif",
-                            size: 12
+                            size: 13,
+                            weight: '500'
                         }
                     }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    titleColor: '#1f2937',
+                    bodyColor: '#4b5563',
+                    bodyFont: {
+                        size: 13
+                    },
+                    borderColor: 'rgba(0,0,0,0.1)',
+                    borderWidth: 1,
+                    padding: 12,
+                    boxPadding: 6
                 }
             },
             scales: {
@@ -463,6 +488,16 @@ new Chart(bayarCtx, {
                         return `${context.label}: ${context.raw} pasien`;
                     }
                 }
+            },
+            cutout: '80%',
+            tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                titleColor: '#1f2937',
+                bodyColor: '#4b5563',
+                borderColor: 'rgba(0,0,0,0.1)',
+                borderWidth: 1,
+                padding: 12,
+                boxPadding: 6
             }
         }
     }
@@ -494,6 +529,19 @@ bayarData.labels.forEach((label, index) => {
     
     bayarLegend.appendChild(item);
 });
+
+// Update last update time
+function updateLastUpdate() {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    document.getElementById('last-update').textContent = formatter.format(now);
+}
+updateLastUpdate();
+setInterval(updateLastUpdate, 1000);
 </script>
 @endpush
 
