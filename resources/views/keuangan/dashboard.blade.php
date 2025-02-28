@@ -122,339 +122,166 @@
         </div>
     </div>
 
-    <!-- Grafik Laba Rugi -->
-    <div class="bg-white hover:bg-gray-50 transition-colors duration-300 rounded-lg shadow-md p-4 sm:p-6 flex-grow">
-        <div class="flex flex-col h-full">
-            <!-- Header Grafik -->
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Laba Rugi</h3>
-                <select id="filterLabaRugi" 
-                        class="select select-bordered select-sm w-32"
-                        onchange="window.location.href='?filter=' + this.value">
-                    <option value="hari" {{ request('filter', 'hari') == 'hari' ? 'selected' : '' }}>Hari</option>
-                    <option value="minggu" {{ request('filter') == 'minggu' ? 'selected' : '' }}>Minggu</option>
-                    <option value="bulan" {{ request('filter') == 'bulan' ? 'selected' : '' }}>Bulan</option>
-                </select>
-            </div>
-            
-            <!-- Container Grafik -->
-            <div class="flex-grow relative min-h-[300px]">
-                <canvas id="labaRugiChart" class="absolute inset-0 w-full h-full"></canvas>
-            </div>
-
-            <!-- Legend -->
-            <div class="flex justify-center mt-4 gap-6 text-sm pt-2">
-                <div class="flex items-center">
-                    <div class="w-8 h-0.5 bg-green-500 mr-2"></div>
-                    <span class="text-gray-600">Laba Bersih</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="w-8 h-0.5 bg-yellow-500 mr-2"></div>
-                    <span class="text-gray-600">Total Beban</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="w-8 h-0.5 bg-blue-500 mr-2"></div>
-                    <span class="text-gray-600">Total Pendapatan</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Grafik Arus Kas -->
-<div class="bg-white hover:bg-gray-50 transition-colors duration-300 rounded-lg shadow-md p-6 mt-6">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Arus Kas</h3>
-        <select class="rounded-md border-gray-300 text-sm px-3 py-1">
-            <option>Hari</option>
-        </select>
-    </div>
-    
-    <!-- Legend -->
-    <div class="flex items-center gap-4 mb-4 text-sm">
-        <div class="flex items-center">
-            <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-            <span>Saldo Keseluruhan</span>
-        </div>
-        <div class="flex items-center">
-            <div class="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-            <span>Saldo Kas Keluar</span>
-        </div>
-        <div class="flex items-center">
-            <div class="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-            <span>Saldo Kas Masuk</span>
-        </div>
-    </div>
-
-    <!-- Grafik -->
-    <div class="h-64">
-        <canvas id="arusKasChart"></canvas>
-    </div>
-</div>
-
-<!-- Setelah grafik Arus Kas -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-    <!-- Saldo Kas -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-2">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800">Saldo Kas</h3>
-                <p class="text-sm text-gray-500">Per {{ date('d F Y') }}</p>
-            </div>
-            <button class="text-gray-400 hover:text-gray-600">
-                <i class='bx bx-refresh text-xl'></i>
-            </button>
-        </div>
-
-        <!-- Header Tabel -->
-        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg mt-4">
-            <span class="text-sm font-medium text-gray-600">AKUN</span>
-            <span class="text-sm font-medium text-gray-600">SALDO</span>
-        </div>
-
-        @if(empty($data['saldo_kas'] ?? []))
-            <!-- Tampilan jika data kosong -->
-            <div class="flex flex-col items-center justify-center py-8">
-                <img src="{{ asset('images/no-data.svg') }}" alt="No Data" class="w-32 h-32 mb-4 opacity-75">
-                <p class="text-gray-500 font-medium">Data tidak tersedia</p>
-                <p class="text-sm text-gray-400 text-center">
-                    Belum ada data yang dapat ditampilkan di halaman ini
-                </p>
-            </div>
-        @else
-            <!-- Tampilan jika ada data -->
-            <div class="space-y-2 mt-2">
-                @foreach($data['saldo_kas'] as $saldo)
-                <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg">
-                    <span class="text-sm text-gray-600">{{ $saldo['akun'] }}</span>
-                    <span class="text-sm font-medium">Rp {{ number_format($saldo['saldo'], 0, ',', '.') }}</span>
-                </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
-
-    <!-- Neraca -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-2">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800">Neraca</h3>
-                <p class="text-sm text-gray-500">Per {{ date('d F Y') }}</p>
-            </div>
-            <button class="text-gray-400 hover:text-gray-600">
-                <i class='bx bx-refresh text-xl'></i>
-            </button>
-        </div>
-
-        <div class="space-y-6 mt-4">
-            <!-- Aset -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-600">Aset</span>
-                    <span class="text-sm font-medium">Rp 0</span>
-                </div>
-                <div class="w-full h-1 bg-green-100 rounded-full">
-                    <div class="w-full h-full bg-green-500 rounded-full"></div>
-                </div>
-            </div>
-
-            <!-- Liabilitas -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-600">Liabilitas</span>
-                    <span class="text-sm font-medium">Rp 0</span>
-                </div>
-                <div class="w-full h-1 bg-blue-100 rounded-full">
-                    <div class="w-full h-full bg-blue-500 rounded-full"></div>
-                </div>
-            </div>
-
-            <!-- Modal -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-600">Modal</span>
-                    <span class="text-sm font-medium">Rp 0</span>
-                </div>
-                <div class="w-full h-1 bg-purple-100 rounded-full">
-                    <div class="w-full h-full bg-purple-500 rounded-full"></div>
-                </div>
-            </div>
-        </div>
-
-        <p class="text-xs text-gray-500 mt-6">
-            Terakhir update: {{ date('d F Y H:i') }}
-        </p>
-    </div>
-</div>
-
-<!-- Setelah grid Saldo Kas -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-    <!-- Hutang -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-2">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800">Hutang</h3>
-                <p class="text-sm text-gray-500">Per {{ date('d F Y') }}</p>
-            </div>
-            <button class="text-gray-400 hover:text-gray-600">
-                <i class='bx bx-refresh text-xl'></i>
-            </button>
-        </div>
-
-        <!-- Header Tabel -->
-        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg mt-4">
-            <span class="text-sm font-medium text-gray-600">AKUN</span>
-            <span class="text-sm font-medium text-gray-600">SALDO</span>
-        </div>
-
-        @if(empty($data['hutang'] ?? []))
-            <!-- Tampilan jika data kosong -->
-            <div class="flex flex-col items-center justify-center py-8">
-                <img src="{{ asset('images/no-data.svg') }}" alt="No Data" class="w-32 h-32 mb-4 opacity-75">
-                <p class="text-gray-500 font-medium">Data tidak tersedia</p>
-                <p class="text-sm text-gray-400 text-center">
-                    Belum ada data yang dapat ditampilkan di halaman ini
-                </p>
-            </div>
-        @else
-            <!-- Tampilan jika ada data -->
-            <div class="space-y-2 mt-2">
-                @foreach($data['hutang'] as $hutang)
-                <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg">
-                    <span class="text-sm text-gray-600">{{ $hutang['akun'] }}</span>
-                    <span class="text-sm font-medium">Rp {{ number_format($hutang['saldo'], 0, ',', '.') }}</span>
-                </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
-
-    <!-- Biaya -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-2">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800">Biaya</h3>
-                <p class="text-sm text-gray-500">{{ date('d F Y') }}</p>
-            </div>
-            <select class="rounded-md border-gray-300 text-sm px-3 py-1">
-                <option>Hari</option>
-            </select>
-        </div>
-
-        @if(empty($data['biaya'] ?? []))
-            <!-- Tampilan jika data kosong -->
-            <div class="flex flex-col items-center justify-center py-8">
-                <img src="{{ asset('images/no-data.svg') }}" alt="No Data" class="w-32 h-32 mb-4 opacity-75">
-                <p class="text-gray-500 font-medium">Data tidak tersedia</p>
-                <p class="text-sm text-gray-400 text-center">
-                    Belum ada biaya yang dikeluarkan di periode ini
-                </p>
-            </div>
-        @else
-            <!-- Tampilan jika ada data -->
-            <div class="space-y-2 mt-4">
-                @foreach($data['biaya'] as $biaya)
-                <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg">
-                    <span class="text-sm text-gray-600">{{ $biaya['nama'] }}</span>
-                    <span class="text-sm font-medium">Rp {{ number_format($biaya['jumlah'], 0, ',', '.') }}</span>
-                </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
-</div>
-
-<!-- Key Metrics Section -->
-<div class="grid grid-cols-1 gap-6 mt-6">
-    <!-- Header dengan Filter -->
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <h2 class="text-lg font-semibold text-gray-800">Key Metrics</h2>
-            <span class="text-sm text-gray-500">Oct 01, 2024 - Dec 30, 2024</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-white rounded-full hover:bg-gray-50">All</button>
-            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-white rounded-full hover:bg-gray-50">7d</button>
-            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-white rounded-full shadow-sm bg-gray-100">30d</button>
-        </div>
-    </div>
-
-    <!-- Tabs Navigation -->
-    <div class="border-b border-gray-200">
-        <nav class="flex gap-8">
-            <button class="px-1 py-4 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600">
-                Workplace Happiness Index
-            </button>
-            <button class="px-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                Absenteeism Overview
-            </button>
-            <button class="px-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                Employee Turnover Insights
-            </button>
-            <button class="px-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                Training Completion Rate
-            </button>
-        </nav>
-    </div>
-
-    <!-- Graph Section -->
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-        <div class="h-[300px]">
-            <canvas id="metricsChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Data Tables Section -->
-    <div class="grid grid-cols-2 gap-6">
-        <!-- Attendance Table -->
-        <div class="bg-white p-6 rounded-xl shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-gray-800">Attendance</h3>
-                <button class="p-2 text-gray-400 hover:text-gray-600">
-                    <i class='bx bx-filter'></i>
-                </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="text-left text-xs text-gray-500">
-                            <th class="pb-3">Employee</th>
-                            <th class="pb-3">Employee ID</th>
-                            <th class="pb-3">Job Title</th>
-                            <th class="pb-3">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm">
-                        <tr class="border-t border-gray-100">
-                            <td class="py-3">John Doe</td>
-                            <td class="py-3">EMP001</td>
-                            <td class="py-3">Developer</td>
-                            <td class="py-3"><span class="px-2 py-1 text-xs text-green-700 bg-green-50 rounded-full">Active</span></td>
-                        </tr>
-                        <!-- Add more rows as needed -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Daily Time Limits -->
-        <div class="bg-white p-6 rounded-xl shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-gray-800">Daily Time Limits</h3>
-                <button class="text-sm text-gray-500 hover:text-gray-700">See All</button>
-            </div>
-            <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-gray-100"></div>
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium">Alex Hales</span>
-                            <span class="text-sm text-gray-500">9:00 AM</span>
-                        </div>
-                        <span class="text-sm text-gray-500">10 Hour</span>
+    <!-- Grid Container untuk List dan Grafik -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- List Daftar Saldo Akhir -->
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100/50 backdrop-blur-sm">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Daftar Saldo Akhir</h3>
+                    <div class="flex items-center gap-2 text-sm text-gray-600">
+                        <i class='bx bx-calendar'></i>
+                        <span>{{ now()->format('d M Y') }}</span>
                     </div>
                 </div>
-                <!-- Add more items as needed -->
+                <!-- ... content saldo ... -->
+            </div>
+        </div>
+
+        <!-- Grafik Laba Rugi -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100/50 backdrop-blur-sm">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Grafik Laba Rugi</h3>
+                    <select class="rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="hari">Hari Ini</option>
+                        <option value="minggu">Minggu Ini</option>
+                        <option value="bulan">Bulan Ini</option>
+                    </select>
+                </div>
+                <div class="h-[200px]">
+                    <canvas id="labaRugiChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Container untuk Arus Kas dan Saldo Kas -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <!-- Grafik Arus Kas -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100/50 backdrop-blur-sm">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Grafik Arus Kas</h3>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                            <span class="text-sm text-gray-600">Kas Masuk</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span class="text-sm text-gray-600">Kas Keluar</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-sm text-gray-600">Saldo</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-[200px]">
+                    <canvas id="arusKasChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saldo Kas -->
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100/50 backdrop-blur-sm">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Saldo Kas</h3>
+                        <p class="text-sm text-gray-500">Per {{ date('d F Y') }}</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600">
+                        <i class='bx bx-refresh text-xl'></i>
+                    </button>
+                </div>
+                
+                @if(empty($data['biaya'] ?? []))
+                    <div class="flex flex-col items-center justify-center py-8">
+                        <img src="{{ asset('images/no-data.svg') }}" alt="No Data" class="w-32 h-32 mb-4 opacity-75">
+                        <p class="text-gray-500 font-medium">Data tidak tersedia</p>
+                        <p class="text-sm text-gray-400 text-center">Belum ada data saldo kas</p>
+                    </div>
+                @else
+                    <div class="space-y-2">
+                        @foreach($data['biaya'] as $biaya)
+                        <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">{{ $biaya['nama'] }}</span>
+                            <span class="text-sm font-medium">Rp {{ number_format($biaya['jumlah'], 0, ',', '.') }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Container untuk Hutang dan Biaya -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <!-- Hutang -->
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100/50 backdrop-blur-sm">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Hutang</h3>
+                        <p class="text-sm text-gray-500">Per {{ date('d F Y') }}</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600">
+                        <i class='bx bx-refresh text-xl'></i>
+                    </button>
+                </div>
+
+                @if(empty($data['hutang'] ?? []))
+                    <div class="flex flex-col items-center justify-center py-8">
+                        <img src="{{ asset('images/no-data.svg') }}" alt="No Data" class="w-32 h-32 mb-4 opacity-75">
+                        <p class="text-gray-500 font-medium">Data tidak tersedia</p>
+                        <p class="text-sm text-gray-400 text-center">Belum ada data hutang</p>
+                    </div>
+                @else
+                    <div class="space-y-2">
+                        @foreach($data['hutang'] as $hutang)
+                        <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                            <span class="text-sm text-gray-600">{{ $hutang['akun'] }}</span>
+                            <span class="text-sm font-medium">Rp {{ number_format($hutang['saldo'], 0, ',', '.') }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Biaya -->
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100/50 backdrop-blur-sm">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Biaya</h3>
+                        <p class="text-sm text-gray-500">{{ date('d F Y') }}</p>
+                    </div>
+                    <select class="rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option>Hari</option>
+                        <option>Minggu</option>
+                        <option>Bulan</option>
+                    </select>
+                </div>
+
+                @if(empty($data['biaya'] ?? []))
+                    <div class="flex flex-col items-center justify-center py-8">
+                        <img src="{{ asset('images/no-data.svg') }}" alt="No Data" class="w-32 h-32 mb-4 opacity-75">
+                        <p class="text-gray-500 font-medium">Data tidak tersedia</p>
+                        <p class="text-sm text-gray-400 text-center">Belum ada data biaya</p>
+                    </div>
+                @else
+                    <div class="space-y-2">
+                        @foreach($data['biaya'] as $biaya)
+                        <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                            <span class="text-sm text-gray-600">{{ $biaya['nama'] }}</span>
+                            <span class="text-sm font-medium">Rp {{ number_format($biaya['jumlah'], 0, ',', '.') }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </div>
