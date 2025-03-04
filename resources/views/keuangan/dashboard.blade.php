@@ -143,14 +143,16 @@
             <div class="p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-semibold text-gray-800">Grafik Laba Rugi</h3>
-                    <select class="rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500">
-                        <option value="hari">Hari Ini</option>
-                        <option value="minggu">Minggu Ini</option>
-                        <option value="bulan">Bulan Ini</option>
+                    <select class="rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            id="filterLabaRugi"
+                            onchange="updateLabaRugiChart(this.value)">
+                        <option value="hari" {{ request('filter', 'hari') == 'hari' ? 'selected' : '' }}>Hari Ini</option>
+                        <option value="minggu" {{ request('filter') == 'minggu' ? 'selected' : '' }}>Minggu Ini</option>
+                        <option value="bulan" {{ request('filter') == 'bulan' ? 'selected' : '' }}>Bulan Ini</option>
                     </select>
                 </div>
                 <div class="h-[200px]">
-                    <canvas id="labaRugiChart"></canvas>
+                    <canvas id="arusKasChart"></canvas>
                 </div>
             </div>
         </div>
@@ -163,23 +165,16 @@
             <div class="p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-semibold text-gray-800">Grafik Arus Kas</h3>
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                            <span class="text-sm text-gray-600">Kas Masuk</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span class="text-sm text-gray-600">Kas Keluar</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span class="text-sm text-gray-600">Saldo</span>
-                        </div>
-                    </div>
+                    <select class="rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            id="filterArusKas"
+                            onchange="updateArusKasChart(this.value)">
+                        <option value="hari">Hari Ini</option>
+                        <option value="minggu">Minggu Ini</option>
+                        <option value="bulan">Bulan Ini</option>
+                    </select>
                 </div>
                 <div class="h-[200px]">
-                    <canvas id="arusKasChart"></canvas>
+                    <canvas id="labaRugiChart"></canvas>
                 </div>
             </div>
         </div>
@@ -333,33 +328,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Tambahkan script untuk Arus Kas
     const arusKasCtx = document.getElementById('arusKasChart').getContext('2d');
+    const arusKasData = @json($data['arus_kas_chart']);
     new Chart(arusKasCtx, {
         type: 'line',
-        data: {
-            labels: Array.from({length: 27}, (_, i) => i + 1),
-            datasets: [{
-                label: 'Saldo Keseluruhan',
-                data: Array(27).fill(0),
-                borderColor: 'rgb(34, 197, 94)',
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.4
-            }, {
-                label: 'Saldo Kas Keluar',
-                data: Array(27).fill(0),
-                borderColor: 'rgb(239, 68, 68)',
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.4
-            }, {
-                label: 'Saldo Kas Masuk',
-                data: Array(27).fill(0),
-                borderColor: 'rgb(59, 130, 246)',
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.4
-            }]
-        },
+        data: arusKasData,
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -372,7 +344,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 0.5
+                        callback: function(value) {
+                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                        }
                     },
                     grid: {
                         color: '#f0f0f0'
@@ -432,6 +406,98 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Fungsi untuk update chart arus kas
+function updateArusKasChart(filter) {
+    fetch(`/keuangan/arus-kas?filter=${filter}`)
+        .then(response => response.json())
+        .then(data => {
+            arusKasChart.data = data;
+            arusKasChart.update();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+// Inisialisasi chart arus kas
+const arusKasCtx = document.getElementById('arusKasChart').getContext('2d');
+let arusKasChart = new Chart(arusKasCtx, {
+    type: 'line',
+    data: @json($data['arus_kas_chart']),
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                    }
+                },
+                grid: {
+                    color: '#f0f0f0'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Tambahkan event listener untuk filter
+document.getElementById('filterArusKas').addEventListener('change', function() {
+    updateArusKasChart(this.value);
+});
+
+// Inisialisasi chart laba rugi
+const labaRugiCtx = document.getElementById('labaRugiChart').getContext('2d');
+const labaRugiData = @json($data['chart_data']);
+let labaRugiChart = new Chart(labaRugiCtx, {
+    type: 'line',
+    data: labaRugiData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                    }
+                },
+                grid: {
+                    color: '#f0f0f0'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Fungsi untuk update chart laba rugi
+function updateLabaRugiChart(filter) {
+    window.location.href = '?filter=' + filter;
+}
 </script>
 @endpush
 

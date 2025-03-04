@@ -48,6 +48,7 @@ Route::middleware(['web', 'auth'])->group(function() {
     // Routes untuk menu keuangan
     Route::prefix('keuangan')->group(function () {
         Route::get('/dashboard', [KeuanganController::class, 'dashboard'])->name('keuangan.dashboard');
+        Route::get('/arus-kas', [KeuanganController::class, 'getArusKasData'])->name('keuangan.arus-kas');
         Route::get('/buku-kas', [KeuanganController::class, 'bukukas'])->name('keuangan.bukukas');
         Route::get('/penerimaan', [KeuanganController::class, 'penerimaan'])->name('keuangan.penerimaan');
         Route::get('/pengeluaran', [KeuanganController::class, 'pengeluaran'])->name('keuangan.pengeluaran');

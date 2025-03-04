@@ -14,7 +14,7 @@ class KunjunganController extends Controller
         if (!Session::has('user')) {
             return redirect()->route('login');
         }
-        
+
         // Langsung arahkan ke dashboard
         return $this->dashboard();
     }
