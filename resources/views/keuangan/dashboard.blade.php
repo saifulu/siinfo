@@ -143,7 +143,7 @@
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Grafik Laba Rugi</h3>
                 <select id="filterLabaRugi" class="rounded-lg border-gray-300 text-sm" onchange="updateLabaRugiChart(this.value)">
-                    <option value="minggu">Minggu Ini</option>
+                    <option value="minggu" selected>Minggu Ini</option>
                     <option value="bulan">Bulan Ini</option>
                     <option value="tahun">Tahun Ini</option>
                 </select>
@@ -164,8 +164,7 @@
                     <select class="rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500"
                             id="filterArusKas"
                             onchange="updateArusKasChart(this.value)">
-                        <option value="hari">Hari Ini</option>
-                        <option value="minggu">Minggu Ini</option>
+                        <option value="minggu" selected>Minggu Ini</option>
                         <option value="bulan">Bulan Ini</option>
                     </select>
                 </div>
@@ -282,12 +281,45 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('labaRugiChart').getContext('2d');
-    const chartData = @json($data['laba_rugi_chart'] ?? []);
-    
-    const chart = new Chart(ctx, {
+    // Inisialisasi chart arus kas
+    const arusKasCtx = document.getElementById('arusKasChart').getContext('2d');
+    let arusKasChart = new Chart(arusKasCtx, {
         type: 'line',
-        data: chartData,
+        data: @json($data['arus_kas_chart']),
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                        }
+                    },
+                    grid: {
+                        color: '#f0f0f0'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Inisialisasi chart laba rugi dengan data mingguan default
+    const labaRugiCtx = document.getElementById('labaRugiChart').getContext('2d');
+    const labaRugiChart = new Chart(labaRugiCtx, {
+        type: 'line',
+        data: @json($data['laba_rugi_chart']),
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -334,204 +366,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle resize
-    new ResizeObserver(() => {
-        chart.resize();
-    }).observe(ctx.canvas);
-
-    // Tambahkan script untuk Arus Kas
-    const arusKasCtx = document.getElementById('arusKasChart').getContext('2d');
-    const arusKasData = @json($data['arus_kas_chart']);
-    new Chart(arusKasCtx, {
-        type: 'line',
-        data: arusKasData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                        }
-                    },
-                    grid: {
-                        color: '#f0f0f0'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-
-    // New Metrics Chart
-    const metricsCtx = document.getElementById('metricsChart').getContext('2d');
-    new Chart(metricsCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-            datasets: [{
-                label: 'Actual',
-                data: [10000, 15000, 8000, 20000, 25000, 20000, 25000],
-                borderColor: 'rgb(99, 102, 241)',
-                tension: 0.4,
-                borderWidth: 2
-            },
-            {
-                label: 'Target',
-                data: [12000, 12000, 12000, 12000, 12000, 12000, 12000],
-                borderColor: 'rgb(229, 231, 235)',
-                borderDash: [5, 5],
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#f0f0f0'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-});
-
-// Fungsi untuk update chart arus kas
-function updateArusKasChart(filter) {
-    fetch(`/keuangan/arus-kas?filter=${filter}`)
-        .then(response => response.json())
-        .then(data => {
-            arusKasChart.data = data;
-            arusKasChart.update();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-
-// Inisialisasi chart arus kas
-const arusKasCtx = document.getElementById('arusKasChart').getContext('2d');
-let arusKasChart = new Chart(arusKasCtx, {
-    type: 'line',
-    data: @json($data['arus_kas_chart']),
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
-                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                    }
-                },
-                grid: {
-                    color: '#f0f0f0'
-                }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
-            }
-        }
+    // Fungsi update chart laba rugi
+    window.updateLabaRugiChart = function(filter) {
+        fetch(`/keuangan/laba-rugi?filter=${filter}`)
+            .then(response => response.json())
+            .then(data => {
+                labaRugiChart.data = data;
+                labaRugiChart.update();
+            });
     }
 });
-
-// Tambahkan event listener untuk filter
-document.getElementById('filterArusKas').addEventListener('change', function() {
-    updateArusKasChart(this.value);
-});
-
-// Inisialisasi chart laba rugi
-const labaRugiCtx = document.getElementById('labaRugiChart').getContext('2d');
-const labaRugiChart = new Chart(labaRugiCtx, {
-    type: 'line',
-    data: @json($data['laba_rugi_chart'] ?? []),
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            intersect: false,
-            mode: 'index'
-        },
-        plugins: {
-            legend: {
-                position: 'top'
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        let label = context.dataset.label || '';
-                        if (label) {
-                            label += ': ';
-                        }
-                        if (context.parsed.y !== null) {
-                            label += new Intl.NumberFormat('id-ID', {
-                                style: 'currency',
-                                currency: 'IDR'
-                            }).format(context.parsed.y);
-                        }
-                        return label;
-                    }
-                }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
-                        return new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            maximumSignificantDigits: 3
-                        }).format(value);
-                    }
-                }
-            }
-        }
-    }
-});
-
-// Fungsi update chart laba rugi
-function updateLabaRugiChart(filter) {
-    fetch(`/keuangan/laba-rugi?filter=${filter}`)
-        .then(response => response.json())
-        .then(data => {
-            labaRugiChart.data = data;
-            labaRugiChart.update();
-        });
-}
 </script>
 @endpush
 
