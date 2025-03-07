@@ -139,21 +139,17 @@
         </div>
 
         <!-- Grafik Laba Rugi -->
-        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100/50 backdrop-blur-sm">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-gray-800">Grafik Laba Rugi</h3>
-                    <select class="rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500"
-                            id="filterLabaRugi"
-                            onchange="updateLabaRugiChart(this.value)">
-                        <option value="hari" {{ request('filter', 'hari') == 'hari' ? 'selected' : '' }}>Hari Ini</option>
-                        <option value="minggu" {{ request('filter') == 'minggu' ? 'selected' : '' }}>Minggu Ini</option>
-                        <option value="bulan" {{ request('filter') == 'bulan' ? 'selected' : '' }}>Bulan Ini</option>
-                    </select>
-                </div>
-                <div class="h-[200px]">
-                    <canvas id="arusKasChart"></canvas>
-                </div>
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Grafik Laba Rugi</h3>
+                <select id="filterLabaRugi" class="rounded-lg border-gray-300 text-sm" onchange="updateLabaRugiChart(this.value)">
+                    <option value="minggu">Minggu Ini</option>
+                    <option value="bulan">Bulan Ini</option>
+                    <option value="tahun">Tahun Ini</option>
+                </select>
+            </div>
+            <div class="h-[300px]">
+                <canvas id="labaRugiChart"></canvas>
             </div>
         </div>
     </div>
@@ -174,7 +170,7 @@
                     </select>
                 </div>
                 <div class="h-[200px]">
-                    <canvas id="labaRugiChart"></canvas>
+                    <canvas id="arusKasChart"></canvas>
                 </div>
             </div>
         </div>
@@ -287,7 +283,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('labaRugiChart').getContext('2d');
-    const chartData = @json($data['chart_data']);
+    const chartData = @json($data['laba_rugi_chart'] ?? []);
     
     const chart = new Chart(ctx, {
         type: 'line',
@@ -295,9 +291,30 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
             plugins: {
                 legend: {
-                    display: false
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR'
+                                }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
                 }
             },
             scales: {
@@ -305,16 +322,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                            return new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                                maximumSignificantDigits: 3
+                            }).format(value);
                         }
-                    },
-                    grid: {
-                        color: '#f0f0f0'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
                     }
                 }
             }
@@ -461,16 +474,36 @@ document.getElementById('filterArusKas').addEventListener('change', function() {
 
 // Inisialisasi chart laba rugi
 const labaRugiCtx = document.getElementById('labaRugiChart').getContext('2d');
-const labaRugiData = @json($data['chart_data']);
-let labaRugiChart = new Chart(labaRugiCtx, {
+const labaRugiChart = new Chart(labaRugiCtx, {
     type: 'line',
-    data: labaRugiData,
+    data: @json($data['laba_rugi_chart'] ?? []),
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
         plugins: {
             legend: {
-                display: false
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR'
+                            }).format(context.parsed.y);
+                        }
+                        return label;
+                    }
+                }
             }
         },
         scales: {
@@ -478,25 +511,26 @@ let labaRugiChart = new Chart(labaRugiCtx, {
                 beginAtZero: true,
                 ticks: {
                     callback: function(value) {
-                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                        return new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            maximumSignificantDigits: 3
+                        }).format(value);
                     }
-                },
-                grid: {
-                    color: '#f0f0f0'
-                }
-            },
-            x: {
-                grid: {
-                    display: false
                 }
             }
         }
     }
 });
 
-// Fungsi untuk update chart laba rugi
+// Fungsi update chart laba rugi
 function updateLabaRugiChart(filter) {
-    window.location.href = '?filter=' + filter;
+    fetch(`/keuangan/laba-rugi?filter=${filter}`)
+        .then(response => response.json())
+        .then(data => {
+            labaRugiChart.data = data;
+            labaRugiChart.update();
+        });
 }
 </script>
 @endpush

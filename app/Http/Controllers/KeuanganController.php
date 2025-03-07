@@ -215,19 +215,39 @@ class KeuanganController extends Controller
         ]);
 
         // Format data untuk chart laba rugi
-        $chartLabels = [];
-        $pendapatanData = [];
-        $pengeluaranData = [];
-        $totalData = [];
+        $labels = [];
+        $pendapatan = [];
+        $pengeluaran = [];
 
-        foreach ($labaRugiData as $data) {
-            $chartLabels[] = $filter === 'hari' 
-                ? $data->periode 
-                : Carbon::parse($data->periode)->format('d M');
-            $pendapatanData[] = (float)$data->pendapatan;
-            $pengeluaranData[] = (float)$data->pengeluaran;
-            $totalData[] = (float)$data->pendapatan - (float)$data->pengeluaran;
+        foreach ($labaRugiData as $row) {
+            $labels[] = $filter === 'hari' 
+                ? $row->periode 
+                : Carbon::parse($row->periode)->format('d M');
+            $pendapatan[] = (float)$row->pendapatan;
+            $pengeluaran[] = (float)$row->pengeluaran;
         }
+
+        $labaRugiChart = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Pendapatan',
+                    'data' => $pendapatan,
+                    'borderColor' => 'rgb(34, 197, 94)', // green-500
+                    'backgroundColor' => 'rgba(34, 197, 94, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'Pengeluaran',
+                    'data' => $pengeluaran,
+                    'borderColor' => 'rgb(239, 68, 68)', // red-500
+                    'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.4
+                ]
+            ]
+        ];
 
         // Debug query
         \Log::info('Debug Query Pendapatan:', [
@@ -378,32 +398,7 @@ class KeuanganController extends Controller
             'piutang_lunas' => $piutang_lunas,
             
             // Data untuk grafik laba rugi
-            'chart_data' => [
-                'labels' => $chartLabels,
-                'datasets' => [
-                    [
-                        'label' => 'Pendapatan',
-                        'data' => $pendapatanData,
-                        'borderColor' => 'rgb(59, 130, 246)',
-                        'borderWidth' => 2,
-                        'tension' => 0.4
-                    ],
-                    [
-                        'label' => 'Pengeluaran',
-                        'data' => $pengeluaranData,
-                        'borderColor' => 'rgb(239, 68, 68)',
-                        'borderWidth' => 2,
-                        'tension' => 0.4
-                    ],
-                    [
-                        'label' => 'Total',
-                        'data' => $totalData,
-                        'borderColor' => 'rgb(34, 197, 94)',
-                        'borderWidth' => 2,
-                        'tension' => 0.4
-                    ]
-                ]
-            ],
+            'laba_rugi_chart' => $labaRugiChart,
 
             // Data untuk grafik arus kas
             'arus_kas_chart' => [
@@ -584,5 +579,104 @@ class KeuanganController extends Controller
                 ]
             ]
         ]);
+    }
+
+    public function getLabaRugiData(Request $request)
+    {
+        $filter = $request->get('filter', 'minggu'); // Default filter minggu ini
+        
+        $query = match($filter) {
+            'minggu' => "
+                SELECT 
+                    dates.periode as tanggal,
+                    COALESCE(SUM(ts.jumlah_bayar), 0) as pendapatan,
+                    COALESCE(SUM(ph.biaya), 0) as pengeluaran
+                FROM (
+                    SELECT DATE(DATE_SUB(CURRENT_DATE(), INTERVAL (a.a) DAY)) as periode
+                    FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 
+                          UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6) AS a
+                ) dates
+                LEFT JOIN tagihan_sadewa ts ON DATE(ts.tgl_bayar) = dates.periode
+                LEFT JOIN pengeluaran_harian ph ON DATE(ph.tanggal) = dates.periode
+                GROUP BY dates.periode
+                ORDER BY dates.periode ASC
+            ",
+            'bulan' => "
+                SELECT 
+                    dates.periode as tanggal,
+                    COALESCE(SUM(ts.jumlah_bayar), 0) as pendapatan,
+                    COALESCE(SUM(ph.biaya), 0) as pengeluaran
+                FROM (
+                    SELECT DATE(DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') + INTERVAL (a.a) DAY) as periode
+                    FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
+                          UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9
+                          UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14
+                          UNION ALL SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19
+                          UNION ALL SELECT 20 UNION ALL SELECT 21 UNION ALL SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24
+                          UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL SELECT 29 
+                          UNION ALL SELECT 30) AS a
+                    WHERE DATE(DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') + INTERVAL a.a DAY) <= LAST_DAY(CURRENT_DATE())
+                ) dates
+                LEFT JOIN tagihan_sadewa ts ON DATE(ts.tgl_bayar) = dates.periode
+                LEFT JOIN pengeluaran_harian ph ON DATE(ph.tanggal) = dates.periode
+                GROUP BY dates.periode
+                ORDER BY dates.periode ASC
+            ",
+            'tahun' => "
+                SELECT 
+                    DATE_FORMAT(dates.periode, '%Y-%m') as tanggal,
+                    COALESCE(SUM(ts.jumlah_bayar), 0) as pendapatan,
+                    COALESCE(SUM(ph.biaya), 0) as pengeluaran
+                FROM (
+                    SELECT LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL a.a MONTH)) as periode
+                    FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 
+                          UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
+                          UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11) AS a
+                ) dates
+                LEFT JOIN tagihan_sadewa ts ON DATE_FORMAT(ts.tgl_bayar, '%Y-%m') = DATE_FORMAT(dates.periode, '%Y-%m')
+                LEFT JOIN pengeluaran_harian ph ON DATE_FORMAT(ph.tanggal, '%Y-%m') = DATE_FORMAT(dates.periode, '%Y-%m')
+                GROUP BY DATE_FORMAT(dates.periode, '%Y-%m')
+                ORDER BY tanggal ASC
+            "
+        };
+
+        $data = DB::select($query);
+
+        // Format data untuk chart
+        $labels = [];
+        $pendapatan = [];
+        $pengeluaran = [];
+
+        foreach ($data as $row) {
+            $labels[] = match($filter) {
+                'minggu' => Carbon::parse($row->tanggal)->format('D, d M'),
+                'bulan' => Carbon::parse($row->tanggal)->format('d M'),
+                'tahun' => Carbon::parse($row->tanggal)->format('M Y')
+            };
+            $pendapatan[] = (float)$row->pendapatan;
+            $pengeluaran[] = (float)$row->pengeluaran;
+        }
+
+        return [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Pendapatan',
+                    'data' => $pendapatan,
+                    'borderColor' => 'rgb(34, 197, 94)', // green-500
+                    'backgroundColor' => 'rgba(34, 197, 94, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'Pengeluaran',
+                    'data' => $pengeluaran,
+                    'borderColor' => 'rgb(239, 68, 68)', // red-500
+                    'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.4
+                ]
+            ]
+        ];
     }
 } 

@@ -54,6 +54,7 @@ Route::middleware(['web', 'auth'])->group(function() {
         Route::get('/pengeluaran', [KeuanganController::class, 'pengeluaran'])->name('keuangan.pengeluaran');
         Route::get('/laporan', [KeuanganController::class, 'laporan'])->name('keuangan.laporan');
         Route::get('/akun', [KeuanganController::class, 'akun'])->name('keuangan.akun');
+        Route::get('/laba-rugi', [KeuanganController::class, 'getLabaRugiData'])->name('keuangan.laba-rugi');
     });
 
     // Routes untuk Kunjungan
